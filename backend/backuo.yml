@@ -1,0 +1,38 @@
+version: "3"
+networks:
+  network:
+      driver: bridge
+services:
+  db:
+    image: postgres
+    restart: on-failure
+    volumes:
+      - ./data/db:/var/lib/postgresql
+    environment:
+      - POSTGRES_DB=hours
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=d10medes
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    ports:
+      - 5431:5431
+    container_name: db
+    networks:
+      network: null
+    expose:
+      - "5431"
+  web:
+    restart: always
+    build: .
+    command: python /code/manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    environment:
+      - DB_HOST=db
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+    links:
+      - db:db
+    networks:
+      network: null
