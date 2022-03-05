@@ -17,11 +17,18 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework import routers
+from rest_framework.urlpatterns import format_suffix_patterns
+from main import views
+
+# router.register(r'tasks', views.getTasksView(), basename='tasks')
 
 urlpatterns = [
-    path('', include('main.urls', namespace="main")),
-    path('admin/', admin.site.urls),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('tasks/', views.getTasksView),
 ]
+
+urlpatterns = format_suffix_patterns(urlpatterns)
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)

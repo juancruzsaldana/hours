@@ -49,9 +49,7 @@ class TogglService:
             if task['name'] == task_name:
                 return task['id']
 
-    def get_time_entries(self):
-        start_date = '2020-12-10T15:00:00-03:00'
-        end_date = '2020-12-30T16:00:00-03:00'
+    def get_time_entries(self, start_date, end_date):
         url = self.base_url + '/time_entries?start_date='+start_date+'&end_date='+end_date
         response = requests.get(url, headers=self.headers, auth=HTTPBasicAuth(self.api_token, 'api_token'))
         return response.json()
