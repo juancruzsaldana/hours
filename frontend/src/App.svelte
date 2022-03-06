@@ -1,5 +1,14 @@
 <script>
-	let name = 'word';
+	import TasksTable from "./tasksTable/TasksTable.svelte";
+	import 'flowbite';
 </script>
+<div class="container mx-auto">
 
-<h1>Hello {name}!</h1>
+	<TasksTable/>
+</div>
+
+<style lang="postcss" global>
+	@tailwind base;
+	@tailwind components;
+	@tailwind utilities;
+  </style>
