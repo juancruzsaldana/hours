@@ -40,10 +40,13 @@ def getTasksView(request, format=None):
 		tasklist = list(serializer.data)
 		values = set(map(lambda x:x['pid'], tasklist))
 		newlist = [[ y for y in tasklist if y['pid']==x] for x in values]
+		
 		groupedList = []
 
 		for taskgroup in newlist:
-			groupedList.append({'pid':taskgroup[0]['pid'], 'tasks':taskgroup})
+			pid = taskgroup[0]['pid']
+			project = TogglService().get_project_by_id(pid)
+			groupedList.append({'pid':pid, 'tasks':taskgroup, 'project':project})
 
 		return Response(groupedList)
 		

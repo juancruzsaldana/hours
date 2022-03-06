@@ -53,4 +53,8 @@ class TogglService:
         url = self.base_url + '/time_entries?start_date='+start_date+'&end_date='+end_date
         response = requests.get(url, headers=self.headers, auth=HTTPBasicAuth(self.api_token, 'api_token'))
         return response.json()
+    def get_project_by_id(self, project_id):
+        url = self.base_url + '/projects/{}'.format(project_id)
+        response = requests.get(url, headers=self.headers, auth=HTTPBasicAuth(self.api_token, 'api_token'))
+        return response.json()
         
