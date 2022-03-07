@@ -45,7 +45,11 @@ def getTasksView(request, format=None):
 
 		for taskgroup in newlist:
 			pid = taskgroup[0]['pid']
-			project = TogglService().get_project_by_id(pid)
+			if pid != 0:
+				project = TogglService().get_project_by_id(pid)
+			else:
+				project = {'data':{'name': 'Agencia', 'id': 1, 'hex_color': "#dddddd"}}
+				pid = 1
 			groupedList.append({'pid':pid, 'tasks':taskgroup, 'project':project})
 
 		return Response(groupedList)
