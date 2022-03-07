@@ -8,7 +8,6 @@
     onMount(() => {
     });
 </script>
-<h2 class="text-center font-bold text-lg  text-indigo-500">Projects</h2>
 {#await promise}
     <p class="dark:text-slate-400">Load Tasks...</p>
 {:then tasks}
