@@ -11,7 +11,7 @@ class TasksService {
             const endpoint = `${base_url}tasks?start_date=${start_date}&end_date=${end_date}`;
             let response = await fetch(endpoint);
             let tasks = await response.json();
-           
+            
             let formatedTasks = this.formatTasks(tasks);
             resolve(formatedTasks)
         });
@@ -76,7 +76,7 @@ class TasksService {
             })
             totalHours += projectDuration;
             totalStructure.tasks.push({
-                duration: moment.duration(projectDuration, 'seconds').format('HH:mm:ss'),
+                duration: moment.duration(projectDuration, 'seconds').format('HH:mm:ss',{trim: false}),
                 date: moment(project.data.created_at).format('DD / MM / YYYY'),
                 start: '',
                 end: '',
@@ -84,12 +84,12 @@ class TasksService {
                 description: project.data.name,
             }); 
             return {
-                project: {...project, durationFormated: moment.duration(projectDuration, 'seconds').format('HH:mm:ss'), durationHours:  projectDuration /( 60 * 60)},
+                project: {...project, durationFormated: moment.duration(projectDuration, 'seconds').format('HH:mm:ss',{trim: false}), durationHours:  projectDuration /( 60 * 60)},
                 tasks: procesedTask,
                 pid, pid
             }
         });
-        totalStructure.project.durationFormated = moment.duration(totalHours, 'seconds').format('HH:mm:ss');
+        totalStructure.project.durationFormated = moment.duration(totalHours, 'seconds').format('HH:mm:ss',{trim: false});
         totalStructure.project.durationHours = totalHours /( 60 * 60);
         return [totalStructure, ...mapedTasks];
     }

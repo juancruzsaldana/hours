@@ -2,12 +2,22 @@
     import { onMount } from "svelte";
     import Tabs from "../Tabs/Tabs.svelte";
     import tasksService from "../services/tasksService";
+    import Dates from "../Forms/Dates.svelte";
     let rate = tasksService.getRate();
-    let promise = (async () => await tasksService.getTasks())();
+    const timezoneHoursOffset = new Date().getTimezoneOffset() / 60;
+    let startDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+    let endDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0, 23-timezoneHoursOffset, 59, 59, 999);
+    let promise = (async () => await tasksService.getTasks(startDate.toISOString(), endDate.toISOString()))();
     let currentTab = 0;
+    const getTasks = (startDate, endDate) =>{
+        startDate = new Date(startDate);
+        endDate = new Date(new Date(endDate).getFullYear(), new Date(endDate).getMonth() + 1, 0, 23-timezoneHoursOffset, 59, 59, 999);
+        promise = (async () => await tasksService.getTasks(startDate.toISOString(), endDate.toISOString()))();
+    }
     onMount(() => {
     });
 </script>
+<Dates onSubmit={getTasks} start={startDate.toISOString().split('T')[0]} end={endDate.toISOString().split('T')[0]}/>
 {#await promise}
     <p class="dark:text-slate-400">Load Tasks...</p>
 {:then tasks}
@@ -18,7 +28,7 @@
     <div id="myTabContent">
     {#each tasks as taskstructure, j }
         <div class="{currentTab == j ? '' : 'hidden'} py-4 flex" id="cont{j}tab" role="tabpanel">
-            <div class="flex-auto w-3/4">
+            <div class="flex-auto w-full lg:w-3/4 ">
                 <table class="table-auto text-xs w-full">
                     <thead>
                         <tr>
@@ -54,7 +64,7 @@
                     </tbody>
                 </table>                
             </div>
-            <div class="flex-auto w-1/4 pl-4">
+            <div class="flex-auto w-full lg:w-1/4 pl-4">
                 <table class="table-auto text-xs w-full text-base text font-bold">
                     <thead>
                         <tr>
