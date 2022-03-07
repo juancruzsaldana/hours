@@ -10,7 +10,7 @@ class TaskSerializer (serializers.Serializer):
     start = serializers.DateField()
     stop = serializers.DateField()
     duration = serializers.CharField()
-    description = serializers.CharField()
+    description = serializers.CharField(default = "No Description")
     duronly = serializers.BooleanField()
     at = serializers.DateField()
     uid = serializers.IntegerField()
