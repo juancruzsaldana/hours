@@ -67,7 +67,7 @@ class TasksService {
             }
             
             let procesedTask = reducedTasks.map((task) => {
-                task.duration = moment.utc(task.duration * 1000).format('HH:mm:ss');
+                task.duration = moment.utc(task.duration * 1000).format('H:mm:ss');
                 task.date = moment(task.start).format('DD / MM / YYYY');
                 task.start = moment(task.start).format('HH:mm:ss');
                 task.end = moment(task.end).format('DD / MM / YYYY');
@@ -76,7 +76,7 @@ class TasksService {
             })
             totalHours += projectDuration;
             totalStructure.tasks.push({
-                duration: moment.duration(projectDuration, 'seconds').format('HH:mm:ss',{trim: false}),
+                duration: moment.duration(projectDuration, 'seconds').format('H:mm:ss',{trim: false}),
                 date: moment(project.data.created_at).format('DD / MM / YYYY'),
                 start: '',
                 end: '',
@@ -84,12 +84,12 @@ class TasksService {
                 description: project.data.name,
             }); 
             return {
-                project: {...project, durationFormated: moment.duration(projectDuration, 'seconds').format('HH:mm:ss',{trim: false}), durationHours:  projectDuration /( 60 * 60)},
+                project: {...project, durationFormated: moment.duration(projectDuration, 'seconds').format('H:mm:ss',{trim: false}), durationHours:  projectDuration /( 60 * 60)},
                 tasks: procesedTask,
                 pid, pid
             }
         });
-        totalStructure.project.durationFormated = moment.duration(totalHours, 'seconds').format('HH:mm:ss',{trim: false});
+        totalStructure.project.durationFormated = moment.duration(totalHours, 'seconds').format('H:mm:ss',{trim: false});
         totalStructure.project.durationHours = totalHours /( 60 * 60);
         return [totalStructure, ...mapedTasks];
     }
