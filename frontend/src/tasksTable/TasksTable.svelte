@@ -27,9 +27,9 @@
     
     <div id="myTabContent">
     {#each tasks as taskstructure, j }
-        <div class="{currentTab == j ? '' : 'hidden'} py-4 flex" id="cont{j}tab" role="tabpanel">
-            <div class="flex-auto w-full lg:w-3/4 ">
-                <table class="table-auto text-xs w-full">
+        <div class="{currentTab == j ? 'lg:flex' : 'hidden'} py-4" id="cont{j}tab" role="tabpanel">
+            <div class="flex-auto w-full lg:w-3/4 md:shrink-0">
+                <table class="table-auto text-sm w-full">
                     <thead>
                         <tr>
                             <th style:background-color={taskstructure.project.data.hex_color} colspan="4" class="py-1 text-neutral-900 text-center border-b border-b-indigo-800 capitalize">
@@ -38,7 +38,7 @@
                         </tr>
                         <tr>
                             <th class="px-2 py-2 bg-indigo-400 text-stone-800 text-left w-1/12">Order</th>
-                            <th class="px-2 py-2 bg-indigo-400 text-stone-800 text-left w-24">Date</th>
+                            <th class="px-2 py-2 bg-indigo-400 text-stone-800 text-left w-28">Date</th>
                             <th class="px-2 py-2 bg-indigo-400 text-stone-800 text-center  w-2/3">
                                 {j===0 ? 'Projects' : 'Tasks'}
                             </th>
@@ -48,7 +48,7 @@
                     <tbody>
                         {#each taskstructure.tasks as task, j}
                             <tr class="{j%2? 'bg-indigo-300': 'bg-indigo-200'} text-stone-800">
-                                <td class="border border-transparent px-2 py-1">{j}</td>
+                                <td class="border border-transparent px-2 py-1">{j + 1}</td>
                                 <td class="border border-transparent px-2 py-2">{task?.date}</td>
                                 <td class="border border-transparent px-4 py-1 capitalize">
                                     {#if task?.count > 1}
@@ -64,7 +64,7 @@
                     </tbody>
                 </table>                
             </div>
-            <div class="flex-auto w-full lg:w-1/4 pl-4">
+            <div class="flex-auto w-full lg:w-1/4 pl-4 md:shrink-0">
                 <table class="table-auto text-xs w-full text-base text font-bold">
                     <thead>
                         <tr>
