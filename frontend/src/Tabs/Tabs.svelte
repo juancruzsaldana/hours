@@ -1,25 +1,23 @@
 <script>
-    import { onMount } from "svelte";
-  
     export let items = [];
     export let activeTabValue;
   
-    onMount(() => {
-      // Set default tab value
-      if (Array.isArray(items) && items.length && items[0].value) {
-        activeTabValue = items[0].value;
-      }
-    });
-  
     const handleClick = tabValue => () => (activeTabValue = tabValue);
+
+    const changeBorderColor = (element, color) => {
+      element.style.borderBottomColor = color;
+    };
   </script>
 
 <ul class="flex flex-wrap -mb-px">
     {#if Array.isArray(items)}
-      {#each items as {pid, tasks}, i}
+      {#each items as {pid, tasks, project}, i}
         <li class="{activeTabValue === i ? 'active' : ''} mr-2">
-          <!-- svelte-ignore a11y-invalid-attribute -->
-          <a href="#" class="inline-block py-4 px-4 text-sm font-medium text-center text-gray-500 rounded-t-lg border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 hover:no-underline" on:click={handleClick(i)}>{pid}</a>
+          <!-- svelte-ignore a11y-mouse-events-have-key-events -->
+          <button style:color={project.data.hex_color} on:mouseleave={(e) => changeBorderColor(e.target, 'transparent')} on:mouseover={(e) => changeBorderColor(e.target, project.data.hex_color)}  on:click={handleClick(i)}
+            class="font-bold inline-block py-4 px-4 capitalize text-sm font-medium text-center border-b-2 border-transparent hover:text-gray-600 hover:border-b-gray-300 dark:hover:text-gray-300 hover:no-underline focus:border-transparent" >
+            {project.data.name}
+          </button>
         </li>
       {/each}
     {/if}
