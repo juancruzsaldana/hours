@@ -45,6 +45,8 @@ class GoogleService:
                 rows = []
                 startRow = 2
                 endRow = startRow
+                if sheet != 'Total':
+                    worksheet.batch_clear(["A2:C100"])
 
                 for task in value['tasks']:
                     sheetReference = self.removeSpecialChars(task['description'])
@@ -59,7 +61,7 @@ class GoogleService:
                 rateCell = 'B1' if sheet == 'Total' else 'F1'
                 worksheet.update(rateCell, rate,value_input_option='USER_ENTERED')
                 sumFormula = f'=SUM(B{startRow}:B{endRow-1}) * B1' if sheet == 'Total' else f'=(INDEX(split(SUM(C{startRow}:C{endRow-1}),":"),1))+((INDEX(split(SUM(C{startRow}:C{endRow-1}),":"),2)/30)*0.5)'
-                sumCell = f'B{endRow + 3}' if sheet == 'Total' else 'F3'
+                sumCell = f'B{endRow + 2}' if sheet == 'Total' else 'F3'
 
                 if sheet == 'Total':
                     worksheet.update(sumCell, sumFormula, value_input_option='USER_ENTERED')

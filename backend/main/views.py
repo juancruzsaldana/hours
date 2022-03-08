@@ -64,7 +64,7 @@ def getGdocsStructure (request, format=None):
 		cwd = GoogleService().connect_to_google_sheet('estimacion ver','Sheet1')
 		return Response(cwd)
 
-@api_view(['POST', 'PUT', 'GET'])	
+@api_view(['POST'])	
 def writeGdocs (request, format=None):
 	if request.method == 'POST':
 		serializer = GDocsRequestSerializer(request.data)
@@ -73,6 +73,3 @@ def writeGdocs (request, format=None):
 		del items['document']
 		gresponse = GoogleService().update_google_sheet(filename ,items)
 		return Response(gresponse)
-	if request.method == 'GET':
-		cwd = GoogleService().connect_to_google_sheet('estimacion ver','Sheet1')
-		return Response(cwd)
