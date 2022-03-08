@@ -3,16 +3,32 @@
     import Tabs from "../Tabs/Tabs.svelte";
     import tasksService from "../services/tasksService";
     import Dates from "../Forms/Dates.svelte";
+    import Icons from "../Icons/Icons.svelte";
     let rate = tasksService.getRate();
     const timezoneHoursOffset = new Date().getTimezoneOffset() / 60;
     let startDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
     let endDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0, 23-timezoneHoursOffset, 59, 59, 999);
     let promise = (async () => await tasksService.getTasks(startDate.toISOString(), endDate.toISOString()))();
     let currentTab = 0;
+    let writePromise = new Promise(resolve => {resolve();});
+    let actionInProgress = '';
     const getTasks = (startDate, endDate) =>{
         startDate = new Date(startDate);
         endDate = new Date(new Date(endDate).getFullYear(), new Date(endDate).getMonth() + 1, 0, 23-timezoneHoursOffset, 59, 59, 999);
         promise = (async () => await tasksService.getTasks(startDate.toISOString(), endDate.toISOString()))();
+    }
+    const wiriteDocs = async (projects = [], exclude = false) => {
+        let tasks = await promise;
+        if(projects.length > 0 && !exclude){
+            tasks = tasks.filter(task => projects.includes(task.project.data.name));
+            actionInProgress = 'selected';
+        }else if(projects.length > 0 && exclude){
+            tasks = tasks.filter(task => !projects.includes(task.project.data.name));
+            actionInProgress = 'exclude';
+        }else{
+            actionInProgress = 'all';
+        }
+        writePromise = tasksService.writeInGdoc(tasks);
     }
     onMount(() => {
     });
@@ -28,7 +44,7 @@
     <div id="myTabContent">
     {#each tasks as taskstructure, j }
         <div class="{currentTab == j ? 'lg:flex' : 'hidden'} py-4" id="cont{j}tab" role="tabpanel">
-            <div class="flex-auto w-full lg:w-3/4 md:shrink-0">
+            <div class="flex-auto w-full lg:w-2/3 md:shrink-0">
                 <table class="table-auto text-sm w-full">
                     <thead>
                         <tr>
@@ -64,7 +80,7 @@
                     </tbody>
                 </table>                
             </div>
-            <div class="flex-auto w-full lg:w-1/4 pl-4 md:shrink-0">
+            <div class="flex-auto w-full lg:w-1/3 pl-4 md:shrink-0">
                 <table class="table-auto text-xs w-full text-base text font-bold">
                     <thead>
                         <tr>
@@ -90,6 +106,36 @@
                         </tr>
                     </tbody>
                 </table>
+                <div class="lg:flex mt-4 gap-1 justify-between">
+                    <button on:click={(e) => {wiriteDocs()}} 
+                    class="bg-[#188038] hover:bg-indigo-[#248947] border-transparent text-white  py-1 px-1 rounded-sm flex gap-2 content-center items-center text-xs">
+                        
+                            {#await writePromise}
+                                <Icons name={actionInProgress === 'all'?"loader":"gsheet"} tailwind={`${actionInProgress === 'all'?"animate-spin":''} flex-no-shrink fill-current h-4 w-4 text-white`} />
+                            {:then result } 
+                                <Icons name="gsheet"/>
+                            {/await}
+                            Write All
+                    </button>
+                    <button on:click={(e) => {wiriteDocs([taskstructure.project.data.name])}} 
+                    class="bg-[#188038] hover:bg-indigo-[#248947] border-transparent text-white  py-1 px-1 rounded-sm flex gap-2 content-center items-center text-xs">
+                        {#await writePromise}
+                            <Icons name={actionInProgress === 'selected'?"loader":"gsheet"} tailwind={`${actionInProgress === 'selected'?"animate-spin":''} flex-no-shrink fill-current h-4 w-4 text-white`} />
+                        {:then result } 
+                            <Icons name="gsheet"/>
+                        {/await}
+                            Write Only This
+                    </button>
+                    <button on:click={(e) => {wiriteDocs([taskstructure.project.data.name], 'exclude')}} 
+                    class="bg-[#188038] hover:bg-indigo-[#248947] border-transparent text-white  py-1 px-1 rounded-sm flex gap-2 content-center items-center text-xs">
+                        {#await writePromise}
+                            <Icons name={actionInProgress === 'exclude'?"loader":"gsheet"} tailwind={`${actionInProgress === 'exclude'?"animate-spin":''} flex-no-shrink fill-current h-4 w-4 text-white`} />
+                        {:then result } 
+                            <Icons name="gsheet"/>
+                        {/await}
+                            Write All Except This
+                    </button>
+                </div>
             </div>
         </div>
     {/each}
