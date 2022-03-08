@@ -1,5 +1,6 @@
 from email.policy import default
 from enum import unique
+from xml.dom.minidom import Document
 from rest_framework import serializers
 
 class TaskSerializer (serializers.Serializer):
@@ -16,3 +17,7 @@ class TaskSerializer (serializers.Serializer):
     uid = serializers.IntegerField()
     pid = serializers.IntegerField(default = 0)
    
+class GDocsRequestSerializer (serializers.Serializer):
+    document = serializers.CharField(default = "No Document")
+    rate = serializers.FloatField(default = 0)
+    structure = serializers.JSONField(default = {})

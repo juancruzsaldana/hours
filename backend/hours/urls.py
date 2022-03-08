@@ -21,11 +21,14 @@ from rest_framework import routers
 from rest_framework.urlpatterns import format_suffix_patterns
 from main import views
 
+
 # router.register(r'tasks', views.getTasksView(), basename='tasks')
 
 urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('tasks/', views.getTasksView),
+    path('gdocs/', views.getGdocsStructure),
+    path('updatesheet/', views.writeGdocs),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

@@ -10,23 +10,27 @@ from django.views.generic.base import TemplateView
 from django.utils.decorators import method_decorator
 from services.google import GoogleService
 from services.toggl import TogglService
-from main.serializers import TaskSerializer
+from main.serializers import TaskSerializer, GDocsRequestSerializer
 from rest_framework import mixins, viewsets, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+import json
 # Create your views here.
 class HomeView(TemplateView):
 	template_name = "index.html"
 	
 	def dispatch(self, *args, **kwargs):
 		return super().dispatch(*args, **kwargs)
+		
 	def index(request):
-		cwd = GoogleService.connect_to_google_sheet('estimacion ver')
-		print(cwd)
-		# toggl = TogglService().get_time_entries()
-		# print(toggl)
-		context = {'cwd': 'datos'}
-		return render(request, 'index.html', context)
+		try:
+			cwd = GoogleService.connect_to_google_sheet('estimacion ver')
+			# toggl = TogglService().get_time_entries()
+			context = {'cwd': 'datos'}
+			return render(request, 'index.html', context)
+		except Exception as e:
+			context = {'cwd': e}
+			return render(request, 'index.html', context)
 
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
@@ -53,4 +57,22 @@ def getTasksView(request, format=None):
 			groupedList.append({'pid':pid, 'tasks':taskgroup, 'project':project})
 
 		return Response(groupedList)
-		
+
+@api_view(['GET'])
+def getGdocsStructure (request, format=None):
+	if request.method == 'GET':
+		cwd = GoogleService().connect_to_google_sheet('estimacion ver','Sheet1')
+		return Response(cwd)
+
+@api_view(['POST', 'PUT', 'GET'])	
+def writeGdocs (request, format=None):
+	if request.method == 'POST':
+		serializer = GDocsRequestSerializer(request.data)
+		items = serializer.data
+		filename = items['document']
+		del items['document']
+		gresponse = GoogleService().update_google_sheet(filename ,items)
+		return Response(gresponse)
+	if request.method == 'GET':
+		cwd = GoogleService().connect_to_google_sheet('estimacion ver','Sheet1')
+		return Response(cwd)
