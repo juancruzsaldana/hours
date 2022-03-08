@@ -1,4 +1,5 @@
 <script>
+    import Icons from "../Icons/Icons.svelte";
     export let start;
     export let end;
     export let onSubmit;
@@ -19,7 +20,9 @@
         class="bg-violet-200 border border-violet-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:border-violet-800 transition duration-150 ease-in-out sm:text-xs sm:leading-4 py-1 px-3"
         >
         <button disabled={!start || !end} type=submit
-        class="bg-violet-500 hover:bg-violet-600 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300 border-transparent px-2 py-1 rounded-md text-violet-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-violet-500 disabled:text-violet-800 ">
-           Get Tasks</button>
+        class="flex gap-2 content-center items-center bg-red-900 hover:bg-white active:bg-violet-700 focus:outline-none focus:ring focus:ring-red-300 border-red-900 border-2 px-2 py-1 rounded-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-red-500 disabled:text-red-800  text-white hover:text-red-900">
+        <Icons name="toggl" tailwind="flex-no-shrink fill-current h-4 w-4 text-[#e00000]" />
+           Get Tasks from Toggl
+        </button>
     </label>
 </form>

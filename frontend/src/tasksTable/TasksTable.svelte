@@ -106,9 +106,9 @@
                         </tr>
                     </tbody>
                 </table>
-                <div class="lg:flex mt-4 gap-1 justify-between">
+                <div class="lg:flex mt-4 gap-2 justify-between lg:flex-wrap-reverse">
                     <button on:click={(e) => {wiriteDocs()}} 
-                    class="bg-[#188038] hover:bg-indigo-[#248947] border-transparent text-white  py-1 px-1 rounded-sm flex gap-2 content-center items-center text-xs">
+                    class="bg-[#188038] hover:bg-white border-2 border-[#188038] text-white hover:text-black font-bold tracking-wide py-1 px-1 rounded-sm flex gap-2 content-center items-center text-xs order-2 mb-2 lg:mb-0">
                         
                             {#await writePromise}
                                 <Icons name={actionInProgress === 'all'?"loader":"gsheet"} tailwind={`${actionInProgress === 'all'?"animate-spin":''} flex-no-shrink fill-current h-4 w-4 text-white`} />
@@ -118,22 +118,24 @@
                             Write All
                     </button>
                     <button on:click={(e) => {wiriteDocs([taskstructure.project.data.name])}} 
-                    class="bg-[#188038] hover:bg-indigo-[#248947] border-transparent text-white  py-1 px-1 rounded-sm flex gap-2 content-center items-center text-xs">
+                    class="bg-[#188038] hover:bg-white border-2 border-[#188038] text-white hover:text-black pl-1 rounded-sm flex gap-2 content-center items-center text-xs justify-center mb-2 lg:mb-0 order-3">
                         {#await writePromise}
                             <Icons name={actionInProgress === 'selected'?"loader":"gsheet"} tailwind={`${actionInProgress === 'selected'?"animate-spin":''} flex-no-shrink fill-current h-4 w-4 text-white`} />
                         {:then result } 
                             <Icons name="gsheet"/>
                         {/await}
-                            Write Only This
+                            Write Only <span 
+                            style="background-color:{taskstructure.project.data.hex_color};" class="font-bold text-black px-2 py-1 capitalize" >{taskstructure.project.data.name}</span>
                     </button>
                     <button on:click={(e) => {wiriteDocs([taskstructure.project.data.name], 'exclude')}} 
-                    class="bg-[#188038] hover:bg-indigo-[#248947] border-transparent text-white  py-1 px-1 rounded-sm flex gap-2 content-center items-center text-xs">
+                    class="bg-[#188038] hover:bg-white border-2 border-[#188038] text-white hover:text-black pl-1 rounded-sm flex gap-2 content-center items-center text-xs justify-center order-1">
                         {#await writePromise}
                             <Icons name={actionInProgress === 'exclude'?"loader":"gsheet"} tailwind={`${actionInProgress === 'exclude'?"animate-spin":''} flex-no-shrink fill-current h-4 w-4 text-white`} />
                         {:then result } 
                             <Icons name="gsheet"/>
                         {/await}
-                            Write All Except This
+                            Write All Except <span 
+                            style:color={taskstructure.project.data.hex_color} class="font-bold text-black px-2 py-1 bg-slate-900 capitalize" >{taskstructure.project.data.name}</span>
                     </button>
                 </div>
             </div>
