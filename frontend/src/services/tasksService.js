@@ -70,16 +70,16 @@ class TasksService {
             
             let procesedTask = reducedTasks.map((task) => {
                 task.duration = moment.utc(task.duration * 1000).format('H:mm:ss');
-                task.date = moment(task.start).format('DD / MM / YYYY');
+                task.date = moment(task.start).format('DD-MM-YYYY');
                 task.start = moment(task.start).format('HH:mm:ss');
-                task.end = moment(task.end).format('DD / MM / YYYY');
+                task.end = moment(task.end).format('DD-MM-YYYY');
                 task.stop = moment(task.stop).format('HH:mm:ss');
                 return task;
             })
             totalHours += projectDuration;
             totalStructure.tasks.push({
                 duration: moment.duration(projectDuration, 'seconds').format('H:mm:ss',{trim: false}),
-                date: moment(project.data.created_at).format('DD / MM / YYYY'),
+                date: moment(project.data.created_at).format('DD-MM-YYYY'),
                 start: '',
                 end: '',
                 stop: '',
