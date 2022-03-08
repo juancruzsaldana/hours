@@ -60,7 +60,7 @@ class GoogleService:
 
                 rateCell = 'B1' if sheet == 'Total' else 'F1'
                 worksheet.update(rateCell, rate,value_input_option='USER_ENTERED')
-                sumFormula = f'=SUM(B{startRow}:B{endRow-1}) * B1' if sheet == 'Total' else f'=(INDEX(split(SUM(C{startRow}:C{endRow-1}),":"),1))+((INDEX(split(SUM(C{startRow}:C{endRow-1}),":"),2)/30)*0.5)'
+                sumFormula = f'=SUM(B{startRow}:B{endRow-1}) * B1' if sheet == 'Total' else f'=(INDEX(split(SUM(C{startRow}:C{endRow+20}),":"),1))+((INDEX(split(SUM(C{startRow}:C{endRow+20}),":"),2)/30)*0.5)'
                 sumCell = f'B{endRow + 2}' if sheet == 'Total' else 'F3'
 
                 if sheet == 'Total':
