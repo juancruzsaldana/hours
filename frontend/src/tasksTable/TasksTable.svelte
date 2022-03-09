@@ -4,6 +4,7 @@
     import tasksService from "../services/tasksService";
     import Dates from "../Forms/Dates.svelte";
     import Icons from "../Icons/Icons.svelte";
+    import { fade, slide } from 'svelte/transition';
     let rate = tasksService.getRate();
     const timezoneHoursOffset = new Date().getTimezoneOffset() / 60;
     let startDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
@@ -12,10 +13,14 @@
     let currentTab = 0;
     let writePromise = new Promise(resolve => {resolve();});
     let actionInProgress = '';
+    let showSubtasks = false;
     const getTasks = (startDate, endDate) =>{
         startDate = new Date(startDate);
         endDate = new Date(new Date(endDate).getFullYear(), new Date(endDate).getMonth() + 1, 0, 23-timezoneHoursOffset, 59, 59, 999);
         promise = (async () => await tasksService.getTasks(startDate.toISOString(), endDate.toISOString()))();
+    }
+    const setShowSubtasks = (taskId) => {
+        showSubtasks = (taskId === showSubtasks)?false: taskId;
     }
     const wiriteDocs = async (projects = [], exclude = false) => {
         let tasks = await promise;
@@ -63,7 +68,7 @@
                         <tr>
                             <th class="px-2 py-2 bg-indigo-400 text-stone-800 text-left w-1/12">Order</th>
                             <th class="px-2 py-2 bg-indigo-400 text-stone-800 text-left w-28">Date</th>
-                            <th class="px-2 py-2 bg-indigo-400 text-stone-800 text-center  w-2/3">
+                            <th class="pr-2 py-2 bg-indigo-400 text-stone-800 text-left  w-2/3">
                                 {j===0 ? 'Projects' : 'Tasks'}
                             </th>
                             <th class="px-2 py-2 bg-indigo-400 text-stone-800 text-center">Duration</th>
@@ -74,11 +79,22 @@
                             <tr class="{j%2? 'bg-indigo-300': 'bg-indigo-200'} text-stone-800">
                                 <td class="border border-transparent px-2 py-1">{j + 1}</td>
                                 <td class="border border-transparent px-2 py-2">{task?.date}</td>
-                                <td class="border border-transparent px-4 py-1 capitalize">
+                                <td class="border border-transparent pr-4 py-2 capitalize">
                                     {#if task?.count > 1}
-                                        <span class="text-stone-800 border dark:border-gray-400 py-1 px-2 mr-1">{task?.count}</span>
+                                        <span on:click={setShowSubtasks(task?.id)} class="text-stone-800 border dark:border-gray-400 py-1 px-2 mr-1 cursor-pointer select-none">{task?.count}</span>
                                     {/if}
                                     {task?.description}
+                                    {#if showSubtasks === task?.id}
+                                        <div transition:slide="{{duration: 150}}" class="flex flex-col border-t text-xs mt-5">
+                                            {#each task?.subtasks as subtask, st}
+                                                <div class="flex items-center py-1 justify-between border-b">
+                                                    <span class="text-neutral-800">{subtask?.description}</span>
+                                                    <span class="text-neutral-800"><strong>Start: </strong>{`${new Date(subtask?.start).toLocaleTimeString()}`}</span>
+                                                    <span class="text-neutral-800"><strong>Stop: </strong>{`${new Date(subtask?.stop).toLocaleTimeString()}`}</span>                                                    
+                                                </div>
+                                            {/each}
+                                        </div>
+                                    {/if}
                                 </td>
                                 <td class="border border-y-indigo-900 border-x-transparent px-2 py-1 lining-nums tabular-nums dark:bg-indigo-400 dark:text-indigo-900 font-bold text-base text-center">
                                     {task?.duration}
