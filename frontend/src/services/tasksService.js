@@ -61,7 +61,7 @@ class TasksService {
                         stop: task.stop,
                         uid: task.uid,
                         wid: task.wid,
-                        subtasks: [...(acc.subtasks || []), task]
+                        subtasks: [...(acc.subtasks || []), {...task, duration: moment.utc(task.duration * 1000).format('H:mm:ss')}]
                     }
                 }, {});
                 reducedTasks.push(taskItem);
