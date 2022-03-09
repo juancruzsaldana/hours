@@ -19,23 +19,31 @@
     }
     const wiriteDocs = async (projects = [], exclude = false) => {
         let tasks = await promise;
+        let sendTasks = JSON.parse(JSON.stringify(tasks));
         if(projects.length > 0 && !exclude){
-            tasks = tasks.filter(task => projects.includes(task.project.data.name));
+            sendTasks = sendTasks.filter(task => projects.includes(task.project.data.name));
             actionInProgress = 'selected';
         }else if(projects.length > 0 && exclude){
-            tasks = tasks.filter(task => !projects.includes(task.project.data.name));
+            sendTasks = sendTasks.filter(task => !projects.includes(task.project.data.name));
+            sendTasks = sendTasks.map(sheet => {
+                if (sheet.project.data.name !== 'Totales'){
+                    return sheet;
+                }
+                sheet.tasks = sheet.tasks.filter(task => !projects.includes(task.description));
+                return sheet;
+            });
             actionInProgress = 'exclude';
         }else{
             actionInProgress = 'all';
         }
-        writePromise = tasksService.writeInGdoc(tasks);
+        writePromise = tasksService.writeInGdoc(sendTasks);
     }
     onMount(() => {
     });
 </script>
 <Dates onSubmit={getTasks} start={startDate.toISOString().split('T')[0]} end={endDate.toISOString().split('T')[0]}/>
 {#await promise}
-    <p class="dark:text-slate-400">Load Tasks...</p>
+    <p class="dark:text-slate-400 flex gap-2 items-center"><Icons name="loader" tailwind="animate-spin h-4 w-4"/>Load Tasks...</p>
 {:then tasks}
     <div class="border-b border-gray-200 dark:border-gray-700">
         <Tabs bind:activeTabValue={currentTab} items={tasks} />
@@ -117,26 +125,28 @@
                             {/await}
                             Write All
                     </button>
-                    <button on:click={(e) => {wiriteDocs([taskstructure.project.data.name])}} 
-                    class="bg-[#188038] hover:bg-white border-2 border-[#188038] text-white hover:text-black pl-1 rounded-sm flex gap-2 content-center items-center text-xs justify-center mb-2 lg:mb-0 order-3">
-                        {#await writePromise}
+                    {#if taskstructure.project.data.name !== 'Totales'}    
+                        <button on:click={(e) => {wiriteDocs([taskstructure.project.data.name])}} 
+                            class="bg-[#188038] hover:bg-white border-2 border-[#188038] text-white hover:text-black pl-1 rounded-sm flex gap-2 content-center items-center text-xs justify-center mb-2 lg:mb-0 order-3">
+                            {#await writePromise}
                             <Icons name={actionInProgress === 'selected'?"loader":"gsheet"} tailwind={`${actionInProgress === 'selected'?"animate-spin":''} flex-no-shrink fill-current h-4 w-4 text-white`} />
-                        {:then result } 
-                            <Icons name="gsheet"/>
-                        {/await}
-                            Write Only <span 
-                            style="background-color:{taskstructure.project.data.hex_color};" class="font-bold text-black px-2 py-1 capitalize" >{taskstructure.project.data.name}</span>
-                    </button>
-                    <button on:click={(e) => {wiriteDocs([taskstructure.project.data.name], 'exclude')}} 
-                    class="bg-[#188038] hover:bg-white border-2 border-[#188038] text-white hover:text-black pl-1 rounded-sm flex gap-2 content-center items-center text-xs justify-center order-1">
+                            {:then result } 
+                                <Icons name="gsheet"/>
+                            {/await}
+                                Write Only <span 
+                                style="background-color:{taskstructure.project.data.hex_color};" class="font-bold text-black px-2 py-1 capitalize" >{taskstructure.project.data.name}</span>
+                        </button>
+                        <button on:click={(e) => {wiriteDocs([taskstructure.project.data.name], 'exclude')}} 
+                        class="bg-[#188038] hover:bg-white border-2 border-[#188038] text-white hover:text-black pl-1 rounded-sm flex gap-2 content-center items-center text-xs justify-center order-1">
                         {#await writePromise}
-                            <Icons name={actionInProgress === 'exclude'?"loader":"gsheet"} tailwind={`${actionInProgress === 'exclude'?"animate-spin":''} flex-no-shrink fill-current h-4 w-4 text-white`} />
-                        {:then result } 
-                            <Icons name="gsheet"/>
-                        {/await}
-                            Write All Except <span 
-                            style:color={taskstructure.project.data.hex_color} class="font-bold text-black px-2 py-1 bg-slate-900 capitalize" >{taskstructure.project.data.name}</span>
-                    </button>
+                                <Icons name={actionInProgress === 'exclude'?"loader":"gsheet"} tailwind={`${actionInProgress === 'exclude'?"animate-spin":''} flex-no-shrink fill-current h-4 w-4 text-white`} />
+                                {:then result } 
+                                <Icons name="gsheet"/>
+                                {/await}
+                                Write All Except <span 
+                                style:color={taskstructure.project.data.hex_color} class="font-bold text-black px-2 py-1 bg-slate-900 capitalize" >{taskstructure.project.data.name}</span>
+                        </button>
+                    {/if}
                 </div>
             </div>
         </div>
