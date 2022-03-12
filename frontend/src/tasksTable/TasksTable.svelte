@@ -123,7 +123,7 @@
                         </tr>
                         <tr class="border-b border-b-slate-700">
                             <td>Amount Hours</td>
-                            <td>{taskstructure.project.durationHours.toFixed(2)}</td>
+                            <td>{parseFloat(taskstructure.project.durationHours.toFixed(9))}</td>
                         </tr>
                         <tr>
                             <td>Totals</td>
