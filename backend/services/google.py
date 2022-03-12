@@ -2,6 +2,7 @@ import re
 import gspread
 from dotenv import load_dotenv, find_dotenv
 import os
+import math
 class GoogleService:
 
     def __init__(self) -> None:
@@ -20,6 +21,20 @@ class GoogleService:
 
     def removeSpecialChars(self, text):
         return re.sub('[^A-Za-z0-9]+', '', text)
+    
+
+    def formatSheet (self, sh, name):
+        worksheet = sh.worksheet(name)
+        if name == 'Total':
+            worksheet.format('B1', {'backgroundColor': {'red': math.floor(0.0 * 255), 'green': math.floor(255.0 * 255), 'blue': math.floor(1.0 * 255)}})
+            worksheet.update('A1', 'Rate', value_input_option='USER_ENTERED')
+        else:
+            worksheet.format('E1:F6', {'backgroundColor': {'red': math.floor(217.0 * 255), 'green': math.floor(217.0 * 255), 'blue': math.floor(217.0 * 255)}})
+            worksheet.update('A1:E1', [["Fecha", "Descripción", "Horas Acumuladas"," ", "Rate"]], value_input_option='USER_ENTERED')
+            worksheet.update('E3:E6', [['Total Horas'],[''],['Total'],['Pago Parcial']], value_input_option='USER_ENTERED')
+            worksheet.update('F6', '0.00', value_input_option='USER_ENTERED')
+            worksheet.format('F5',{"numberFormat": {"type":"number","pattern": "#,###.##"}})
+        return True
 
     def createSheets (self, file, data):
         sh = self.gc.open(file)
@@ -29,6 +44,7 @@ class GoogleService:
             sheet = self.removeSpecialChars(sheet)
             if sheet not in existingWorksheets:
                 sh.add_worksheet(sheet, 100, 20)
+                self.formatSheet(sh, sheet)
         return sh
        
 
@@ -45,8 +61,7 @@ class GoogleService:
                 rows = []
                 startRow = 2
                 endRow = startRow
-                if sheet != 'Total':
-                    worksheet.batch_clear(["A2:C100"])
+                worksheet.batch_clear(["A2:C100"])
 
                 for task in value['tasks']:
                     sheetReference = self.removeSpecialChars(task['description'])
@@ -60,11 +75,15 @@ class GoogleService:
 
                 rateCell = 'B1' if sheet == 'Total' else 'F1'
                 worksheet.update(rateCell, rate,value_input_option='USER_ENTERED')
-                sumFormula = f'=SUM(B{startRow}:B{endRow-1}) * B1' if sheet == 'Total' else f'=(INDEX(split(SUM(C{startRow}:C{endRow+20}),":"),1))+((INDEX(split(SUM(C{startRow}:C{endRow+20}),":"),2)/30)*0.5)'
+                formulaRange = f'C{startRow}:C{endRow+20}'
+                sumFormula = f'=SUM(B{startRow}:B{endRow-1}) * B1' if sheet == 'Total' else f'=(INDEX(split(SUM({formulaRange}),":"),1))+((INDEX(split(SUM({formulaRange}),":"),2)/30)*0.5)+(INDEX(split(SUM({formulaRange}),":"),3)/3600)'
                 sumCell = f'B{endRow + 2}' if sheet == 'Total' else 'F3'
 
                 if sheet == 'Total':
+                    worksheet.format(f'A{endRow + 2}', {'textFormat': {'bold': True}})
+                    worksheet.update(f'A{endRow + 2}', 'Total $')
                     worksheet.update(sumCell, sumFormula, value_input_option='USER_ENTERED')
+                    worksheet.format(sumCell,{"numberFormat": {"type":"number","pattern": "#,###.##"}})
                 else:
                     worksheet.update(sumCell, sumFormula, raw=False)
                     worksheet.update('F5', '=F3*F1', raw=False)
