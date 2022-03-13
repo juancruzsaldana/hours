@@ -5,14 +5,14 @@
 	import appConfigService from './services/appConfigService';
 	import Sidebar from './Components/Sidebar.svelte';
 	import 'flowbite';
-	let sidebarItesm = appConfigService.getFeatures();
+	let {sidebarItems, home} = appConfigService.getFeatures();
 </script>
 <svelte:head>
 	<title>Local Status</title>
 </svelte:head>
 <Router>
 	<div class="w-full flex flex-col sm:flex-row flex-grow">
-		<Sidebar items={sidebarItesm} home="expenses"/>
+		<Sidebar items={sidebarItems} home={home}/>
 		<Route path="/">
 			<div class="all-screen min-h-screen w-full flex-grow pt-4 dark:bg-gradient-to-br from-neutral-900 via-neutral-900 to-neutral-800 ">
 				<Expenses/>

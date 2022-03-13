@@ -1,11 +1,13 @@
 const features = env?.FEATURES;
-
+const home = env?.HOME;
 class AppConfigService {
     getFeatures () {
+        let items = []
         if(typeof features !== 'undefined' && features.length){
-            return features.split(', ');
+            items = features.split(', ');
+            return {sidebarItems: items, home: home}
         }
-        return [];
+        return {sidebarItems:items, home:'/'};
     }
 }
 
