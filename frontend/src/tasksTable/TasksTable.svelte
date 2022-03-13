@@ -4,7 +4,7 @@
     import tasksService from "../services/tasksService";
     import Dates from "../Forms/Dates.svelte";
     import Icons from "../Icons/Icons.svelte";
-    import { fade, slide } from 'svelte/transition';
+    import {slide} from 'svelte/transition';
     export let rate;
     const timezoneHoursOffset = new Date().getTimezoneOffset() / 60;
     let startDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
@@ -48,7 +48,8 @@
 </script>
 <div class="container mx-auto">
     <h1 class="text-center font-bold text-lg  text-[#40628f]">Águilas devs</h1>
-    <Dates onSubmit={getTasks} start={startDate.toISOString().split('T')[0]} end={endDate.toISOString().split('T')[0]}/>
+    <Dates onSubmit={getTasks} start={startDate.toISOString().split('T')[0]} end={endDate.toISOString().split('T')[0]}
+    icon="toggl" buttonText="Get Tasks from Toggl" color="red"/>
     {#await promise}
         <p class="dark:text-slate-400 flex gap-2 items-center"><Icons name="loader" tailwind="animate-spin h-4 w-4"/>Load Tasks...</p>
     {:then tasks}

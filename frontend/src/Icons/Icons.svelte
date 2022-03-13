@@ -30,7 +30,7 @@
     <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
     width="588.000000pt" height="592.000000pt" viewBox="0 0 588.000000 592.000000"
     preserveAspectRatio="xMidYMid meet"
-    class={tailwind}>
+    class="{tailwind} bg-white rounded-full">
         <g transform="translate(0.000000,592.000000) scale(0.100000,-0.100000)"
         fill="#e00000" stroke="none">
         <path d="M2600 5756 c-770 -99 -1443 -486 -1902 -1094 -296 -393 -478 -844
