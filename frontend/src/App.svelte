@@ -30,9 +30,4 @@
 	@tailwind base;
 	@tailwind components;
 	@tailwind utilities;
-	@layer base {
-		a[aria-current="page"] {
-			background-color: rgb(63 131 248); /*@apply directive show an svelte error */
-		}
-	}
 </style>

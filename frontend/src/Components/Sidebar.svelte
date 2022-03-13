@@ -34,3 +34,8 @@
         </nav>
     </div>
 </div>
+<style lang="postcss" global>
+	a[aria-current="page"] {
+		background-color: rgb(63 131 248); /*@apply directive show an svelte error */
+	}
+</style>
