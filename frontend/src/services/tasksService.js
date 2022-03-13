@@ -2,7 +2,6 @@
 import moment from "moment";
 import 'moment-duration-format';
 const base_url = env?.API_URL;
-const rate = env?.RATE;
 const document = env?.GOOGLESHEET;
 
 
@@ -94,9 +93,6 @@ class TasksService {
         totalStructure.project.durationFormated = moment.duration(totalHours, 'seconds').format('H:mm:ss',{trim: false});
         totalStructure.project.durationHours = totalHours /( 60 * 60);
         return [totalStructure, ...mapedTasks];
-    }
-    getRate(){
-        return rate;
     }
 
     writeInGdoc (data) {

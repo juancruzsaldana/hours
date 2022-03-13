@@ -6,6 +6,7 @@
 	import Sidebar from './Components/Sidebar.svelte';
 	import 'flowbite';
 	let {sidebarItems, home} = appConfigService.getFeatures();
+	const rate = appConfigService.getRate();
 </script>
 <svelte:head>
 	<title>Local Status</title>
@@ -15,12 +16,12 @@
 		<Sidebar items={sidebarItems} home={home}/>
 		<Route path="/">
 			<div class="all-screen min-h-screen w-full flex-grow pt-4 dark:bg-gradient-to-br from-neutral-900 via-neutral-900 to-neutral-800 ">
-				<Expenses/>
+				<Expenses rate={rate}/>
 			</div>
 		</Route>
 		<Route path="tasks">
 			<div class="all-screen min-h-screen w-full flex-grow pt-4 dark:bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
-				<TasksTable/>
+				<TasksTable rate={rate}/>
 			</div>
 		</Route>
 	</div>

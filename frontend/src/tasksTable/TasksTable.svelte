@@ -5,7 +5,7 @@
     import Dates from "../Forms/Dates.svelte";
     import Icons from "../Icons/Icons.svelte";
     import { fade, slide } from 'svelte/transition';
-    let rate = tasksService.getRate();
+    export let rate;
     const timezoneHoursOffset = new Date().getTimezoneOffset() / 60;
     let startDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
     let endDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0, 23-timezoneHoursOffset, 59, 59, 999);
