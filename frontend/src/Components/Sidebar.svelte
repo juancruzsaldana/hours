@@ -24,7 +24,7 @@
                 {#each items as item}
                     <li class="!mt-0">
                         <Link title="{item[0].toUpperCase() + item.slice(1)}"  to="/{item !== home?item:''}" getProps
-                        class="w-full hover:bg-blue-500 flex align-center font-bold hover:no-underline py-2 gap-2 {showSidebar?'justify-start px-2':'justify-center'}">
+                        class="w-full hover:bg-blue-500 flex align-center font-bold hover:no-underline py-2 gap-2 px-2 {showSidebar?'justify-start':'justify-center sm:px-0'}">
                             <Icons name={item} tailwind="w-6 h-6 text-white"/>
                             <span class={`hidden capitalize text-white ${showSidebar?'sm:inline':''}`}>{item}</span>
                         </Link>
