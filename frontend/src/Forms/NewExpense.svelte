@@ -5,6 +5,7 @@
     export let sending;
     const handleSubmit = (e) => {
         onSubmit(expense);
+        expense = {};
     }
 </script>
 <form on:submit|preventDefault={handleSubmit} class="text-sm sm:flex flex-wrap text-neutral-500">

@@ -36,31 +36,36 @@
         })
     };
 
-    const showEditExpense = (event, expense_id) =>{
+    const showEditExpense = (event, expense_id, field) =>{
         let editIds = editingId;
-        editIds.push(expense_id);
+        editIds.push(expense_id + field);
         editingId = editIds;
         setTimeout(() => {
             event.target.querySelector('input')?.select();
+            event.target.querySelector('select')?.focus();
         }, 2);
     };
 
-    const hideEditExpense = async (expense_id) =>{
+    const hideEditExpense = async (expense_id, field) =>{
         let editIds = editingId;
-        editIds = editIds.filter(id => id !== expense_id);
+        editIds = editIds.filter(id => id !== expense_id + field);
         editingId = editIds;
         promiseExpense = await promiseExpense;
     };
 
     const editExpense = async (event, expense_id) => {
-        if(event.key !== 'Enter') return;
+        if(event.key !== 'Enter' && event.target.name !== 'type') return;
         let expensesArray = await promiseExpense;
+        const field = event.target.name;
         expensesArray = expensesArray.filter(expense => expense.id === expense_id);
         let expense = expensesArray[0];
-        expense.amount = event.target.value;
+        expense[field] = event.target.value;
+        if(field === 'type'){
+            expense.get_type_display = event.target.selectedOptions[0].text
+        }
         expensesService.editExpense(expense_id, expense).then(async r => {
             //TODO add message with result
-            hideEditExpense(expense_id);
+            hideEditExpense(expense_id, field);
         });
     };
 </script>
@@ -91,13 +96,41 @@
                     <tbody>
                         {#each  expenses as expense}
                             <tr>
-                                <td class="pl-1 text-left border border-indigo-500">{expense.name}</td>
-                                <td class="pl-1 text-left border border-indigo-500">{expense.type}</td>
-                                <td on:click={(e) => {showEditExpense(e, expense.id)}} 
-                                    class="{editingId.includes(expense.id)?'':"pr-1"} text-right border border-indigo-500 w-1/5">
-                                    {#if editingId.includes(expense.id)}
-                                        <input on:blur={(e)=>{hideEditExpense(expense.id)}} on:keydown={(e) => e.key === 'Escape'? hideEditExpense(expense.id):true} on:keypress={(e) => editExpense(e, expense.id)} type="number" value={expense.amount}
-                                        class="-indent-8 pr-1 w-full h-full text-right py-0 pl-0 border-0 bg-transparent focus:border-0 focus:ouline-0 focus:shadow-none focus:ring-offset-transparent focus:ring-offset-0 focus:ring-transparent" />
+                                <td on:click={(e) => {showEditExpense(e, expense.id, 'name')}} 
+                                class="pl-1 text-left border border-indigo-500 w-2/5">
+                                    {#if editingId.includes(expense.id + 'name')}
+                                        <input on:blur={(e) => {hideEditExpense(expense.id, 'name')}}
+                                               on:keydown={(e) => e.key === 'Escape'?hideEditExpense(expense.id, 'name'): true}
+                                               on:keypress={(e) => editExpense(e, expense.id)} type="text" name="name" value={expense.name} 
+                                               class="pr-1 w-full h-full py-0 pl-0 border-0 bg-transparent focus:border-0 focus:ouline-0 focus:shadow-none focus:ring-offset-transparent focus:ring-offset-0 focus:ring-transparent" />
+                                    {:else}
+                                        {expense.name}
+                                    {/if}           
+                                </td>
+
+
+                                <td  on:click={(e) => {showEditExpense(e, expense.id, 'type')}} 
+                                class="pl-1 text-left border border-indigo-500 w-1/5">
+                                    {#if editingId.includes(expense.id + 'type')}
+                                        <select name="type" value={expense.type}  on:blur={(e) => {hideEditExpense(expense.id, 'type')}}
+                                                on:change={(e) => editExpense(e, expense.id)}
+                                                class="text-indigo-100 divide-y pr-1 w-full h-full py-0 pl-0 border-0 bg-transparent focus:border-0 focus:ouline-0 focus:shadow-none focus:ring-offset-transparent focus:ring-offset-0 focus:ring-transparent">
+                                                {#each expense.type_choices as {value, name}, i }
+                                                    <option class="text-indigo-700 text-sm" value={value}>{name}</option>
+                                                {/each}
+                                        </select>
+                                    {:else}
+                                        {expense.get_type_display}
+                                    {/if}
+                                </td>
+
+                                <td on:click={(e) => {showEditExpense(e, expense.id, 'amount')}} 
+                                    class="{editingId.includes(`${expense.id}amount`)?'':"pr-1"} text-right border border-indigo-500 w-1/5">
+                                    {#if editingId.includes(`${expense.id}amount`)}
+                                        <input on:blur={(e)=>{hideEditExpense(expense.id, 'amount')}} 
+                                               on:keydown={(e) => e.key === 'Escape'? hideEditExpense(expense.id, 'amount'):true} 
+                                               on:keypress={(e) => editExpense(e, expense.id)} type="number" value={expense.amount} name="amount"
+                                               class="-indent-8 pr-1 w-full h-full text-right py-0 pl-0 border-0 bg-transparent focus:border-0 focus:ouline-0 focus:shadow-none focus:ring-offset-transparent focus:ring-offset-0 focus:ring-transparent" />
                                     {:else}
                                         {expense.amount}
                                     {/if}

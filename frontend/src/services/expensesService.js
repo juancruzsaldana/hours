@@ -18,6 +18,12 @@ class ExpensesService {
     }
 
     newExpense (expense) {
+        if(expense.start){
+            expense.start = moment(expense.start).format('YYYY-MM-DD');
+        }
+        if(expense.end){
+            expense.end = moment(expense.end).format('YYYY-MM-DD');
+        }
         return new Promise(async (resolve, reject) => {
             const endpoint = `${base_url}expenses/`;
             let response = await fetch(endpoint, {
