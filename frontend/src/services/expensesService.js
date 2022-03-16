@@ -4,6 +4,12 @@ const base_url = env?.API_URL;
 
 class ExpensesService {
     getExpenses(start_date = '2022-01-01T15:00:00-03:00', end_date = '2022-01-31T16:00:00-03:00') {
+        if(start_date){
+            start_date = moment(start_date).format('YYYY-MM-DD');
+        }
+        if(end_date){
+            end_date = moment(end_date).format('YYYY-MM-DD');
+        }
         return new Promise(async (resolve, reject) => {
             const endpoint = `${base_url}expenses?start_date=${start_date}&end_date=${end_date}`;
             let response = await fetch(endpoint);

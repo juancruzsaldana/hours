@@ -5,13 +5,17 @@
     import NewExpense from "../Forms/NewExpense.svelte";
     export let rate;
     const timezoneHoursOffset = new Date().getTimezoneOffset() / 60;
-    let startDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-    let endDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0, 23-timezoneHoursOffset, 59, 59, 999);
+    let startDate = new Date(new Date().getFullYear(), 0, 1);
+    let endDate = new Date(new Date().getFullYear(), 11, 31, 23-timezoneHoursOffset, 59, 59, 999);
     let promiseExpense = (async () => await expensesService.getExpenses(startDate.toISOString(), endDate.toISOString()))();
     let newExpensePromise = new Promise((resolve, reject) => resolve(true));
     let deletingId = [];
     let editingId = [];
-    const getExpenses = () => true;
+    const getExpenses = (startDate, endDate) =>{
+        startDate = new Date(startDate);
+        endDate = new Date(new Date(endDate).getFullYear(), new Date(endDate).getMonth() + 1, 0, 23-timezoneHoursOffset, 59, 59, 999);
+        promiseExpense = (async () => await expensesService.getExpenses(startDate.toISOString(), endDate.toISOString()))();
+    }
     const onNewExpense = async (expense) => {
         newExpensePromise = expensesService.newExpense(expense).then(async r => {
             console.log(r, expense);
