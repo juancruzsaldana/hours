@@ -1,6 +1,8 @@
 
 import moment from "moment";
 import 'moment-duration-format';
+import apiService from "./apiService";
+import appConfigService from "./appConfigService";
 const base_url = env?.API_URL;
 const document = env?.GOOGLESHEET;
 
@@ -131,6 +133,7 @@ class TasksService {
                 ...sheet
             }
         });
+        const rate = appConfigService.getRate();
         return {
             document: document,
             structure: structureObject,
