@@ -1,6 +1,6 @@
 const features = env?.FEATURES;
 const home = env?.HOME;
-const rate = env?.RATE;
+const rate = env?.RATE;;
 class AppConfigService {
     getFeatures () {
         let items = []
@@ -14,6 +14,7 @@ class AppConfigService {
         return rate;
     }
 }
-
 const appConfigService = new AppConfigService();
 export default appConfigService;
+export const base_url = env?.API_URL;
+export const media_url = env?.MEDIA_URL;

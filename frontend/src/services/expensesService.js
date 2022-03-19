@@ -77,11 +77,16 @@ class ExpensesService {
     }
 
     getPayments(start_date, end_date) {
+        if(start_date){
+            start_date = moment(start_date).format('YYYY-MM-DD');
+        }
+        if(end_date){
+            end_date = moment(end_date).format('YYYY-MM-DD');
+        }
         return new Promise(async (resolve, reject) => {
-            const endpoint = `payments/`;
+            const endpoint = `payments?start_date=${start_date}&end_date=${end_date}`;
             const payments = await apiService.get(endpoint);
             const r = await this.formatPaymentsByPeriodAndExpense(payments)
-            console.log(r);
             resolve(r)
         });
     }
@@ -91,6 +96,34 @@ class ExpensesService {
         let dateWithoutOffset = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
         let key = dateWithoutOffset.toLocaleString('default', { month: 'short', year: 'numeric' });
         return full ? key + payment.expense : key;
+    }
+    refreshPayments (payments) {
+        return new Promise(async (resolve, reject) => {
+            for(let period in payments){
+                if(!payments[period].expense){
+                    payments[period] = {
+                        total : 0,
+                        estimated : 0,
+                        hoursValue: 0,
+                        hours : 0,
+                        diference: 0,
+                    }
+                }
+            }
+            for(let period in payments){
+                if(payments[period].expense){
+                    let key = this.getKeyFromPayment(payments[period], false);
+                    payments[key] = {
+                        total : payments[key].total + payments[period].amount,
+                        estimated : payments[key].estimated + Number(payments[period].estimated),
+                        hoursValue: payments[period].hoursValue,
+                        hours : payments[key].hours + payments[period].amount/ payments[period].hoursValue,
+                        diference: payments[key].diference + (payments[period].amount - payments[period].estimated),
+                    }
+                }
+            }
+            resolve(payments);
+        });
     }
     formatPaymentsByPeriodAndExpense(payments) {
         return new Promise((resolve, reject) => {
@@ -142,7 +175,7 @@ class ExpensesService {
             }
             
             const r  =await apiService.post(endpoint, data, headers);
-            resolve({result: r})
+            resolve(r)
         });
     }
 
@@ -173,7 +206,7 @@ class ExpensesService {
                 }
             }
             const r = await apiService.put(endpoint, data, headers);
-            resolve({result: r})    
+            resolve(r)    
         });
     }
 }

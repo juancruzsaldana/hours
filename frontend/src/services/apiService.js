@@ -1,4 +1,4 @@
-const base_url = env?.API_URL;
+import {base_url} from "./appConfigService";
 class ApiService {
     get(endpoint, data) {
         return new Promise(async (resolve, reject) => {

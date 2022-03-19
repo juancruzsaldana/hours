@@ -3,7 +3,7 @@
     import Modal from "../Components/Modal.svelte";
     import NewPayment from "../Forms/NewPayment.svelte";
     import expensesService from "../services/expensesService";
-    import { onMount, afterUpdate, beforeUpdate} from "svelte";
+    import {media_url} from "../services/appConfigService";
     export let expenses;
     export let start_date;
     export let end_date;
@@ -23,6 +23,7 @@
     for (let start = new Date(startDate) ; start <= endDate ; start.setMonth(start.getMonth() + 1)) {
         periods.unshift({
             label: start.toLocaleString('default', { month: 'short', year: 'numeric' }),
+            date: start.getTime(),
         });
     }
 
@@ -31,20 +32,20 @@
         let key = expensesService.getKeyFromPayment(payment);
         let paymentsObjects = await paymentsPromise;
         paymentsObjects = {...paymentsObjects, [key]: payment};
-        paymentsPromise = new Promise((resolve) => resolve(paymentsObjects));
+        paymentsPromise = expensesService.refreshPayments(paymentsObjects);
     }
     const onNewPayment = async (payment, files) => {
         newPaymentPromise = expensesService.newPayment(payment, files).then(async r => {
             showModal = false;
             //TODO show success message
-            setPayment(payment);
+            setPayment(r.payment);
             
         })
     };
     const onEditPayment = async (payment, files) => {
         newPaymentPromise = expensesService.editPayment(payment.id, payment, files).then(async r => {
             //TODO show success message
-            setPayment(payment);
+            setPayment(r.payment);
         })
     };
     const onDeletePayment = async (payment_id) => {
@@ -74,12 +75,10 @@
         const key = expensesService.getKeyFromPayment(payment);
         hideEditPayment(key);
         if(payment.id && !payment.amount){
-             await onDeletePayment(payment.id);
-             let paymentsObjects = await paymentsPromise;
-             delete paymentsObjects[key];
-            paymentsPromise = new Promise((resolve) => {
-                resolve(paymentsObjects);
-            });
+            await onDeletePayment(payment.id);
+            let paymentsObjects = await paymentsPromise;
+            delete paymentsObjects[key];
+            paymentsPromise = expensesService.refreshPayments(paymentsObjects);
             return;
         }
         if(payment.id){
@@ -87,6 +86,12 @@
             return;
         }
         onNewPayment(payment);
+    }
+    const addVoucherToPayment = (key) => {
+        document.getElementById(`voucher${key}`)?.click();
+    }
+    const addVoucher = (event, payment) => {
+        onEditPayment(payment, event.target.files);
     }
 </script>
 {#if showModal}
@@ -130,10 +135,26 @@
                                 {#if editingPayments.includes(period.label + expense.id)}
                                     <NewPayment  onSubmit={onSubmitFormCell} sending={newPaymentPromise} 
                                     expense={expense.id} 
-                                    payment={payments[period.label + expense.id] ||  {hoursValue: rate, date: new Date(period.label)}} 
+                                    payment={payments[period.label + expense.id] ||  {hoursValue: rate, date: period.date, estimated: expense.amount}} 
                                     cell={period.label + expense.id} onBlur={hideEditPayment}/>
                                 {:else}
-                                    { payments[period.label + expense.id ]?.amount ?? '' } 
+                                    {#if payments[period.label + expense.id]}
+                                        {#if payments[period.label + expense.id].voucher}
+                                            <a  on:click|stopPropagation={ e => e} href={media_url + payments[period.label + expense.id].voucher} target="_blank"
+                                            class="text-violet-500 visited:text-violet-500">
+                                                {payments[period.label + expense.id ].amount } 
+                                            </a>
+                                        {:else}
+                                            <input type="file" on:click|stopPropagation={ e => e} name="" id={`voucher${payments[period.label + expense.id ].id}`} class="hidden" on:change={(e)=>{addVoucher(e, payments[period.label + expense.id ])}}>
+                                            <!-- svelte-ignore a11y-invalid-attribute -->
+                                            <a href="javascript:;" on:click|preventDefault|stopPropagation={addVoucherToPayment(payments[period.label + expense.id ].id)}
+                                            class="text-violet-300 visited:text-violet-300">
+                                                {payments[period.label + expense.id ].amount } 
+                                            </a>
+                                        {/if}
+                                    {:else}
+                                        {''}
+                                    {/if}
                                 {/if}   
                             </td>
                         {/await}
