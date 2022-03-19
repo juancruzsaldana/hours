@@ -1,3 +1,5 @@
 /backend/services/account_acces.json
 backend/.env
 /backend/.env
+/backend/data/vouchers
+/backend/data/db

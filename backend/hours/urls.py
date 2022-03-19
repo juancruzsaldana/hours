@@ -20,6 +20,7 @@ from django.conf.urls.static import static
 from rest_framework import routers
 from rest_framework.urlpatterns import format_suffix_patterns
 from main import views
+from expenses import views as expense_views
 
 
 # router.register(r'tasks', views.getTasksView(), basename='tasks')
@@ -29,6 +30,10 @@ urlpatterns = [
     path('tasks/', views.getTasksView),
     path('gdocs/', views.getGdocsStructure),
     path('updatesheet/', views.writeGdocs),
+    path('expenses/', expense_views.getExpenses),
+    path('expenses/<int:expense_id>/', expense_views.operateExpense),
+    path('payments/', expense_views.Payments.as_view()),
+    path('payments/<int:payment_id>/', expense_views.Payments.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

@@ -9,7 +9,7 @@ class TaskSerializer (serializers.Serializer):
     wid = serializers.IntegerField()
     billable = serializers.BooleanField()
     start = serializers.DateField()
-    stop = serializers.DateField()
+    stop = serializers.DateField(default='', allow_null=True)
     duration = serializers.CharField()
     description = serializers.CharField(default = "No Description")
     duronly = serializers.BooleanField()
