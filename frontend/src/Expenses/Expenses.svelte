@@ -3,17 +3,19 @@
     import Icons from "../Icons/Icons.svelte";
     import expensesService from "../services/expensesService";
     import NewExpense from "../Forms/NewExpense.svelte";
+    import Payments from "./Payments.svelte";
     export let rate;
+    const moneyFormater = new Intl.NumberFormat('es-AR', {style:'currency', currency: 'ARS'});
     const timezoneHoursOffset = new Date().getTimezoneOffset() / 60;
     let startDate = new Date(new Date().getFullYear(), 0, 1);
-    let endDate = new Date(new Date().getFullYear(), 11, 31, 23-timezoneHoursOffset, 59, 59, 999);
-    let promiseExpense = (async () => await expensesService.getExpenses(startDate.toISOString(), endDate.toISOString()))();
+    let endDate = new Date(new Date().getFullYear(), new Date().getMonth()+2, 0, 23-timezoneHoursOffset, 59, 59, 999);
+    let promiseExpense = (async () => await expensesService.getExpenses(startDate?.toISOString(), endDate?.toISOString()))();
     let newExpensePromise = new Promise((resolve, reject) => resolve(true));
     let deletingId = [];
     let editingId = [];
-    const getExpenses = (startDate, endDate) =>{
-        startDate = new Date(startDate);
-        endDate = new Date(new Date(endDate).getFullYear(), new Date(endDate).getMonth() + 1, 0, 23-timezoneHoursOffset, 59, 59, 999);
+    const getExpenses = (start_date, end_date) =>{
+        startDate = new Date(start_date);
+        endDate = new Date(new Date(end_date).getFullYear(), new Date(end_date).getMonth() + 1, 0, 23-timezoneHoursOffset, 59, 59, 999);
         promiseExpense = (async () => await expensesService.getExpenses(startDate.toISOString(), endDate.toISOString()))();
     }
     const onNewExpense = async (expense) => {
@@ -86,10 +88,11 @@
                 <table class="table-auto text-sm w-full text-sm text-indigo-300 border-collapse border border-indigo-500">
                     <thead>
                         <tr class="border-b border-indigo-500 bg-indigo-200 text-indigo-400">
-                            <th colspan="5" class="pr-2 py-1 text-right text-xs">Hours Value: {rate}</th>
+                            <th colspan="6" class="pr-2 py-1 text-right text-xs">Hours Value: {rate}</th>
                         </tr>
-                        <tr class="text-center bg-indigo-300 text-indigo-500"><th  colspan="5">Fixed Expenses</th></tr>
+                        <tr class="text-center bg-indigo-300 text-indigo-500"><th  colspan="6">Fixed Expenses</th></tr>
                         <tr>
+                            <th class="pl-1 text-left border border-indigo-500 bg-indigo-300 text-indigo-500">#</th>
                             <th class="pl-1 text-left border border-indigo-500 bg-indigo-300 text-indigo-500">Nombre</th>
                             <th class="pl-1 text-left border border-indigo-500 bg-indigo-300 text-indigo-500">Period</th>
                             <th class="pl-1 text-left border border-indigo-500 bg-indigo-300 text-indigo-500">Value</th>
@@ -98,8 +101,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {#each  expenses as expense}
+                        {#each  expenses as expense, i}
                             <tr>
+                                <td class="text-center border border-indigo-500 ">{i+1}</td>
                                 <td on:click={(e) => {showEditExpense(e, expense.id, 'name')}} 
                                 class="pl-1 text-left border border-indigo-500 w-2/5">
                                     {#if editingId.includes(expense.id + 'name')}
@@ -111,7 +115,6 @@
                                         {expense.name}
                                     {/if}           
                                 </td>
-
 
                                 <td  on:click={(e) => {showEditExpense(e, expense.id, 'type')}} 
                                 class="pl-1 text-left border border-indigo-500 w-1/5">
@@ -136,12 +139,11 @@
                                                on:keypress={(e) => editExpense(e, expense.id)} type="number" value={expense.amount} name="amount"
                                                class="-indent-8 pr-1 w-full h-full text-right py-0 pl-0 border-0 bg-transparent focus:border-0 focus:ouline-0 focus:shadow-none focus:ring-offset-transparent focus:ring-offset-0 focus:ring-transparent" />
                                     {:else}
-                                        {expense.amount}
+                                        { moneyFormater.format( Number(expense.amount))}
                                     {/if}
                                 </td>
                                 <td class="pr-1 text-right border border-indigo-500">{(expense.amount/rate).toFixed(2)}</td>
                                 <td class="pr-1 text-center border border-indigo-500">
-                                    <!-- <a href="#" class="text-indigo-500 hover:text-indigo-600">Edit</a>-->
                                     <buton on:click={(e) => {deleteExpense(expense.id)}} title="Delete {expense.name}" 
                                     class="text-red-500 hover:text-red-600 cursor-pointer">
                                         <Icons name="{deletingId.includes(expense.id)?'loader':'delete'}" tailwind="{deletingId.includes(expense.id)?'animate-spin text-white':''} h-5 w-5 mx-auto stroke-0"/>
@@ -152,8 +154,8 @@
                     </tbody>
                     <tfoot>
                         <tr class="bg-indigo-300 text-indigo-500">
-                            <td colspan="2" class="font-bold text-right text-sm pr-1">Totals</td>
-                            <td class="font-bold text-right border border-indigo-500">{(expenses.reduce((acc, expense) => acc + Number(expense.amount), 0)).toFixed(2)}</td>
+                            <td colspan="3" class="font-bold text-right text-sm pr-1">Totals</td>
+                            <td class="font-bold text-right border border-indigo-500">{moneyFormater.format(expenses.reduce((acc, expense) => acc + Number(expense.amount), 0))}</td>
                             <td class="font-bold text-right border border-indigo-500">{(expenses.reduce((acc, expense) => acc + Number(expense.amount/rate), 0)).toFixed(2)}</td>
                             <td></td>
                         </tr>
@@ -165,6 +167,13 @@
             <NewExpense onSubmit={onNewExpense} sending={newExpensePromise}/>
         </div>
     </div>
+    {#await promiseExpense}
+        <div></div>
+    {:then expenses}
+        <div class="sm:flex justify-between">
+            <Payments start_date={startDate} end_date={endDate} expenses={expenses} rate={rate}/>
+        </div>
+    {/await}
 </div>
 <style>
     input::-webkit-outer-spin-button, 

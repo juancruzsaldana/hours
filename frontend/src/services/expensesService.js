@@ -1,5 +1,7 @@
 import moment from "moment";
 import 'moment-duration-format';
+import apiService from "./apiService";
+
 const base_url = env?.API_URL;
 
 class ExpensesService {
@@ -71,6 +73,107 @@ class ExpensesService {
             });
             let r = await response.json();
             resolve({result: r})
+        });
+    }
+
+    getPayments(start_date, end_date) {
+        return new Promise(async (resolve, reject) => {
+            const endpoint = `payments/`;
+            const payments = await apiService.get(endpoint);
+            const r = await this.formatPaymentsByPeriodAndExpense(payments)
+            console.log(r);
+            resolve(r)
+        });
+    }
+    getKeyFromPayment (payment, full) {
+        full = full ?? true;
+        let date = new Date(payment.date);
+        let dateWithoutOffset = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+        let key = dateWithoutOffset.toLocaleString('default', { month: 'short', year: 'numeric' });
+        return full ? key + payment.expense : key;
+    }
+    formatPaymentsByPeriodAndExpense(payments) {
+        return new Promise((resolve, reject) => {
+           const ret = payments.map( p => ({
+                ...p,
+                amount: Number(p.amount),
+                estimated : Number(p.estimated),
+                hoursValue: Number(p.hoursValue),
+            })).reduce((acc, p) => {
+                let keyFull =this.getKeyFromPayment(p);
+                let key = this.getKeyFromPayment(p, false);
+                let accTotal =  acc[key]?.total || 0;
+                let accEstimated = acc[key]?.estimated || 0;
+                let accHours = acc[key]?.hours || 0;
+                let accDiference = acc[key]?.diference || 0;
+                return {
+                    ...acc,
+                    [keyFull]: {
+                        ...p
+                    },
+                    [key]: {
+                        total : accTotal + p.amount,
+                        estimated : accEstimated + p.estimated,
+                        hoursValue: p.hoursValue,
+                        hours : accHours + p.amount/ p.hoursValue,
+                        diference: accDiference + (p.amount - p.estimated),
+                    }
+                }
+            }, {});
+            resolve(ret);
+        });
+    }
+
+    newPayment(payment, files) {
+        return new Promise(async (resolve, reject) => {
+            let headers = {'Accept': 'application/json'}
+            const endpoint = `payments/`;
+            let data = new FormData();
+            if(typeof files !== 'undefined' && files.length > 0){
+                let file = files[0];
+                data.append('voucher', file);
+                headers = {...headers, 'Content-Disposition': 'attachment', 'filename': file.name}
+            }
+            for(var key in payment){
+                if(key === 'date'){
+                    payment[key] = moment(payment[key]).format('YYYY-MM-DD');
+                }
+                data.append(key, payment[key]);
+            }
+            
+            const r  =await apiService.post(endpoint, data, headers);
+            resolve({result: r})
+        });
+    }
+
+    deletePayment(payment_id) {
+        return new Promise(async (resolve, reject) => {
+            const endpoint = `payments/${payment_id}`;
+            const r = await apiService.delete(endpoint);
+            resolve({result: r})
+        });
+    }
+
+    editPayment(id, payment, files) {
+        return new Promise (async (resolve, reject) => {
+            let headers = {'Accept': 'application/json'}
+            const endpoint = `payments/${id}/`;
+            let data = new FormData();
+            if(typeof files !== 'undefined' && files.length > 0){
+                let file = files[0];
+                data.append('voucher', file);
+                headers = {...headers, 'Content-Disposition': 'attachment', 'filename': file.name}
+            }
+            for(var key in payment){
+                if(key === 'date'){
+                    payment[key] = moment(payment[key]).format('YYYY-MM-DD');
+                }
+                if(key !== 'voucher'){
+                    data.append(key, payment[key]);
+                }
+            }
+            const r = await apiService.put(endpoint, data, headers);
+            resolve({result: r})    
         });
     }
 }
