@@ -4,6 +4,7 @@
 	import Expenses from './Expenses/Expenses.svelte';
 	import appConfigService from './services/appConfigService';
 	import Sidebar from './Components/Sidebar.svelte';
+	import Access from './Access/Access.svelte';
 	import 'flowbite';
 	let {sidebarItems, home} = appConfigService.getFeatures();
 	const rate = appConfigService.getRate();
@@ -15,6 +16,11 @@
 	<div class="w-full flex flex-col sm:flex-row flex-grow">
 		<Sidebar items={sidebarItems} home={home}/>
 		<Route path="/">
+			<div class="all-screen min-h-screen w-full flex-grow pt-4 dark:bg-gradient-to-br from-stone-900 via-stone-900 to-stone-800 ">
+				<Access/>
+			</div>
+		</Route>
+		<Route path="expenses">
 			<div class="all-screen min-h-screen w-full flex-grow pt-4 dark:bg-gradient-to-br from-neutral-900 via-neutral-900 to-neutral-800 ">
 				<Expenses rate={rate}/>
 			</div>

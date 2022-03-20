@@ -20,7 +20,6 @@
     }
     const onNewExpense = async (expense) => {
         newExpensePromise = expensesService.newExpense(expense).then(async r => {
-            console.log(r, expense);
             let expensesArray = await promiseExpense;
             expensesArray.push(r.result.expense);
             promiseExpense = new Promise((resolve) => {
@@ -83,7 +82,7 @@
     <div class="sm:flex py-2 my-2 border-t border-neutral-800 justify-between">
         <div class="sm:w-3/5 rounded-md overflow-hidden pb-1">
             {#await promiseExpense}
-                <p class="dark:text-indigo-400 flex gap-2 items-center"><Icons name="loader" tailwind="animate-spin h-4 w-4"/>Load Tasks...</p>
+                <p class="dark:text-indigo-400 flex gap-2 items-center"><Icons name="loader" tailwind="animate-spin h-4 w-4"/>Load Expenses...</p>
             {:then expenses}
                 <table class="table-auto text-sm w-full text-sm text-indigo-300 border-collapse border border-indigo-500">
                     <thead>
