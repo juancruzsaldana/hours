@@ -15,6 +15,7 @@
             let accessArray = await promiseAccess;
             accessArray.push(r.access);
             promiseAccess = new Promise((resolve) => resolve(accessArray));
+            visibleAccess = accessArray;
         });
     };
 
@@ -24,6 +25,7 @@
             promiseAccess = new Promise((resolve) => {
                 resolve(accessArray);
             });
+            visibleAccess = accessArray;
             buttonText = 'New Access';
         });
     };
@@ -39,6 +41,7 @@
             promiseAccess = new Promise((resolve) => {
                 resolve(accessArray);
             });
+            visibleAccess = accessArray;
         });
     }
 
@@ -86,7 +89,9 @@
                             <td class="text-center border border-cyan-500">{i+1}</td>
                             <td class="pl-1 text-left border border-cyan-500">{acc.service}</td>
                             <td class="pl-1 text-left border border-cyan-500">
-                                <a href={acc.url} title="{acc.url}" target="_blank" rel="noopener noreferrer" class="text-cyan-200 visited:text-cyan-200">{acc.url}</a>
+                                {#if acc.url}
+                                    <a href={acc.url} title="{acc.url}" target="_blank" rel="noopener noreferrer" class="text-cyan-200 visited:text-cyan-200">{acc.url}</a>
+                                {/if}
                             </td>
                             <td class="pl-1 text-left border border-cyan-500">
                                 {acc.user}
