@@ -80,8 +80,6 @@ class ExpensesService {
         return new Promise(async (resolve, reject) => {
             const endpoint = `expensesoptions/`;
             const r = await apiService.get(endpoint);
-            // const resp = Array.from(r)
-            // console.log(typeof resp);
             resolve(r)
         });
     }
@@ -128,7 +126,7 @@ class ExpensesService {
                         estimated : (payments[key]?.estimated ?? 0) + Number(payments[period].estimated),
                         hoursValue: payments[period].hoursValue,
                         hours : (payments[key]?.hours ?? 0) + payments[period].amount/ payments[period].hoursValue,
-                        diference: (payments[key]?.diference ?? 0) + (payments[period].amount - payments[period].estimated),
+                        diference: (payments[key]?.diference ?? 0) + (payments[period].estimated - payments[period].amount),
                     }
                 }
             }
@@ -159,7 +157,7 @@ class ExpensesService {
                         estimated : accEstimated + p.estimated,
                         hoursValue: p.hoursValue,
                         hours : accHours + p.amount/ p.hoursValue,
-                        diference: accDiference + (p.amount - p.estimated),
+                        diference: accDiference + (p.estimated - p.amount),
                     }
                 }
             }, {});

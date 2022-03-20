@@ -4,8 +4,8 @@
     import expensesService from "../services/expensesService";
     import NewExpense from "../Forms/NewExpense.svelte";
     import Payments from "./Payments.svelte";
+    import {moneyFormater} from "../services/utils";
     export let rate;
-    const moneyFormater = new Intl.NumberFormat('es-AR', {style:'currency', currency: 'ARS'});
     const timezoneHoursOffset = new Date().getTimezoneOffset() / 60;
     let startDate = new Date(new Date().getFullYear(), 0, 1);
     let endDate = new Date(new Date().getFullYear(), new Date().getMonth()+2, 0, 23-timezoneHoursOffset, 59, 59, 999);
