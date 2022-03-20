@@ -76,6 +76,16 @@ class ExpensesService {
         });
     }
 
+    getExpensesOptions() {
+        return new Promise(async (resolve, reject) => {
+            const endpoint = `expensesoptions/`;
+            const r = await apiService.get(endpoint);
+            // const resp = Array.from(r)
+            // console.log(typeof resp);
+            resolve(r)
+        });
+    }
+
     getPayments(start_date, end_date) {
         if(start_date){
             start_date = moment(start_date).format('YYYY-MM-DD');

@@ -1,5 +1,6 @@
 <script>
     import Icons from "../Icons/Icons.svelte";
+    import expensesService from "../services/expensesService";
     export let expense ={};
     export let onSubmit;
     export let sending;
@@ -7,6 +8,8 @@
         onSubmit(expense);
         expense = {};
     }
+    let expenseTypesPromise = (async () => await expensesService.getExpensesOptions())();
+
 </script>
 <form on:submit|preventDefault={handleSubmit} class="text-sm sm:flex flex-wrap text-neutral-500">
     <div class="sm:w-3/4 mb-2 sm:pr-1">
@@ -19,10 +22,15 @@
     </div>
     <div class="sm:w-1/3 mb-2 sm:pr-1">
         <label for="type" class="font-bold mb-1">Type</label>
-        <select id="type" class="w-full h-7 py-0 text-sm  rounded bg-indigo-200 border border-indigo-400" bind:value={expense.type}>
-            <option value="1">Monthly</option>
-            <option value="2">Variable Monthly</option>
-        </select>
+        {#await expenseTypesPromise}
+            <Icons name="loader" tailwind="animate-spin flex-no-shrink fill-current h-4 w-4 text-white"/>    
+        {:then expenseTypes}
+            <select id="type" class="w-full h-7 py-0 text-sm  rounded bg-indigo-200 border border-indigo-400" bind:value={expense.type}>
+                {#each expenseTypes as type}
+                    <option value={type[0]}>{type[1]}</option>
+                {/each}
+            </select>
+        {/await}
     </div>
     <div class="sm:w-1/3 mb-2 sm:px-1">
         <label for="start" class="font-bold mb-1">Start</label>

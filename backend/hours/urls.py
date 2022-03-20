@@ -33,6 +33,7 @@ urlpatterns = [
     path('expenses/', expense_views.getExpenses),
     path('expenses/<int:expense_id>/', expense_views.operateExpense),
     path('payments/', expense_views.Payments.as_view()),
+    path('expensesoptions/', expense_views.Expensesoptions.as_view()),
     path('payments/<int:payment_id>/', expense_views.Payments.as_view()),
 ]
 

@@ -53,6 +53,10 @@ class Paymentsposttoupdate(APIView):
         print(update_serializer.errors)
         return Response({"message": "Payment updated successfully"})
 
+class Expensesoptions (APIView):
+    def get(self, request, format=None):
+        options = Expense.EXPENSES_TYPES
+        return Response(options)
 class Payments (APIView):
     parser_classes = [MultiPartParser, FormParser, JSONParser]
     def get (self, request, format=None):
