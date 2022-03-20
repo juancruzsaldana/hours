@@ -18,9 +18,11 @@
     })();
     
 	startDate = new Date(start_date);
+    let startWithoutOffset = new Date(startDate.getTime() + startDate.getTimezoneOffset() * 60000);
     endDate = new Date(end_date);
+    let endWithoutOffset = new Date(endDate.getTime() + endDate.getTimezoneOffset() * 60000);
     let periods = [];
-    for (let start = new Date(startDate) ; start <= endDate ; start.setMonth(start.getMonth() + 1)) {
+    for (let start = startWithoutOffset ; start <= endWithoutOffset ; start.setMonth(start.getMonth() + 1)) {
         periods.unshift({
             label: start.toLocaleString('default', { month: 'short', year: 'numeric' }),
             date: start.getTime(),
