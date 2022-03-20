@@ -27,7 +27,7 @@ class Payment(models.Model):
     description = models.TextField(default="", blank=True)
     expense = models.ForeignKey(Expense, on_delete=models.CASCADE, related_name='payments', blank=True, null=True)
     hoursValue = models.FloatField(default=0)
-    voucher  = models.FileField(upload_to='data/vouchers/', blank=True, default='', null=True)
+    voucher  = models.FileField(upload_to='vouchers/', blank=True, default='', null=True)
     estimated = models.FloatField(default=0)
     
     def __str__(self):

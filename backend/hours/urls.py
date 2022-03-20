@@ -21,7 +21,7 @@ from rest_framework import routers
 from rest_framework.urlpatterns import format_suffix_patterns
 from main import views
 from expenses import views as expense_views
-
+from django.views.static import serve
 
 # router.register(r'tasks', views.getTasksView(), basename='tasks')
 
@@ -35,6 +35,9 @@ urlpatterns = [
     path('payments/', expense_views.Payments.as_view()),
     path('payments/<int:payment_id>/', expense_views.Payments.as_view()),
 ]
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns = format_suffix_patterns(urlpatterns)
 

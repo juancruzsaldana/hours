@@ -13,7 +13,7 @@
     $: startDate = new Date(start_date);
     $: endDate = new Date(end_date);
     paymentsPromise = (async () => {
-        let r = await expensesService.getPayments(startDate?.toISOString(), endDate?.toISOString())
+        let r = await expensesService.getPayments(start_date?.toISOString(), end_date?.toISOString())
         return r;
     })();
     
@@ -73,12 +73,12 @@
 
     const onSubmitFormCell = async (payment) => {
         const key = expensesService.getKeyFromPayment(payment);
-        hideEditPayment(key);
         if(payment.id && !payment.amount){
             await onDeletePayment(payment.id);
             let paymentsObjects = await paymentsPromise;
             delete paymentsObjects[key];
             paymentsPromise = expensesService.refreshPayments(paymentsObjects);
+            hideEditPayment(key);
             return;
         }
         if(payment.id){
@@ -142,7 +142,7 @@
                                         {#if payments[period.label + expense.id].voucher}
                                             <a  on:click|stopPropagation={ e => e} href={media_url + payments[period.label + expense.id].voucher} target="_blank"
                                             class="text-violet-500 visited:text-violet-500">
-                                                {payments[period.label + expense.id ].amount } 
+                                                {payments[period.label + expense.id ].amount || '' } 
                                             </a>
                                         {:else}
                                             <input type="file" on:click|stopPropagation={ e => e} name="" id={`voucher${payments[period.label + expense.id ].id}`} class="hidden" on:change={(e)=>{addVoucher(e, payments[period.label + expense.id ])}}>

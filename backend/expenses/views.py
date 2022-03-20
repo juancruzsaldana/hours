@@ -56,10 +56,9 @@ class Paymentsposttoupdate(APIView):
 class Payments (APIView):
     parser_classes = [MultiPartParser, FormParser, JSONParser]
     def get (self, request, format=None):
-        # start_date = request.query_params.get('start_date')
-        # end_date = request.query_params.get('end_date')
-        # queryset = Payment.objects.filter(Q(date__gte=start_date) | Q(date__isnull=True) , Q(date__lte=end_date) | Q(date__isnull=True))
-        queryset = Payment.objects.all()
+        start_date = request.query_params.get('start_date')
+        end_date = request.query_params.get('end_date')
+        queryset = Payment.objects.filter(Q(date__gte=start_date) | Q(date__isnull=True) , Q(date__lte=end_date) | Q(date__isnull=True))
         read_serializer = PaymentSerializer(queryset, many=True)
         return Response(read_serializer.data)
 
@@ -78,9 +77,9 @@ class Payments (APIView):
         if update_serializer.is_valid():
             updated_expense = update_serializer.save()
             updated_expense = PaymentSerializer(updated_expense).data
-            return Response({"message": "Expense updated successfully", "expense": updated_expense})
+            return Response({"message": "Payment updated successfully", "payment": updated_expense})
         else:
-            return Response({"message": "Expense not updated", "errors": update_serializer.errors})
+            return Response({"message": "Payment not updated", "errors": update_serializer.errors})
 
     def delete (self, request, payment_id, format=None):
         payment = Payment.objects.get(id=payment_id)

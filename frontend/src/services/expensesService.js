@@ -114,11 +114,11 @@ class ExpensesService {
                 if(payments[period].expense){
                     let key = this.getKeyFromPayment(payments[period], false);
                     payments[key] = {
-                        total : payments[key].total + payments[period].amount,
-                        estimated : payments[key].estimated + Number(payments[period].estimated),
+                        total : (payments[key]?.total ?? 0) + payments[period].amount,
+                        estimated : (payments[key]?.estimated ?? 0) + Number(payments[period].estimated),
                         hoursValue: payments[period].hoursValue,
-                        hours : payments[key].hours + payments[period].amount/ payments[period].hoursValue,
-                        diference: payments[key].diference + (payments[period].amount - payments[period].estimated),
+                        hours : (payments[key]?.hours ?? 0) + payments[period].amount/ payments[period].hoursValue,
+                        diference: (payments[key]?.diference ?? 0) + (payments[period].amount - payments[period].estimated),
                     }
                 }
             }
