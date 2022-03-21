@@ -94,7 +94,7 @@
                                 {/if}
                             </td>
                             <td class="pl-1 text-left border border-cyan-500">
-                                {acc.user}
+                                {acc.user ?? ''}
                             </td>
                             <td class="pl-1 text-left border border-cyan-500">
                                 {acc.password ?? ''}
