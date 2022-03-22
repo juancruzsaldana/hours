@@ -3,3 +3,4 @@ backend/.env
 /backend/.env
 /backend/data/vouchers
 /backend/data/db
+/.vscode
