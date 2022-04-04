@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'expenses',
     'access',
+    'dollars',
 ]
 
 MIDDLEWARE = [
