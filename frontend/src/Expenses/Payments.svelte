@@ -125,16 +125,17 @@
                 <th class="text-center border border-violet-500 bg-violet-300 text-violet-500 capitalize">Hours Value</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="text-xs">
             {#each periods as period }
                 <tr>
-                    <td class="pl-1 text-left border border-violet-500 capitalize font-bold truncate">{period.label}</td>
+                    <td title={period.label}
+                    class="pl-1 text-left border border-violet-500 capitalize font-bold truncate">{period.label}</td>
                     {#each expenses as expense }
                         {#await paymentsPromise}
                             <td class="text-center border border-violet-500"> <Icons name="loader" tailwind="animate-spin h-2 w-2"/> </td>
                         {:then payments} 
-                            <td on:click={(e) => {showEditPayment(e, period.label + expense.id)}}
-                            class="text-center border border-violet-500 relative {payments[period.label + expense.id]?.description? 'with-description pointer before:content-[""] before:block before:absolute before:top-0 before:right-0 before:h-1 before:w-1 before:border-4 before:border-b-transparent before:border-l-transparent before:border-red-500': ''}"> 
+                            <td title={payments[period.label + expense.id]?.amount ?? ''} on:click={(e) => {showEditPayment(e, period.label + expense.id)}}
+                            class="text-right border border-violet-500 relative trunctate {payments[period.label + expense.id]?.description? 'with-description pointer before:content-[""] before:block before:absolute before:top-0 before:right-0 before:h-1 before:w-1 before:border-4 before:border-b-transparent before:border-l-transparent before:border-red-500': ''}"> 
                                 {#if editingPayments.includes(period.label + expense.id)}
                                     <NewPayment  onSubmit={onSubmitFormCell} sending={newPaymentPromise} 
                                     expense={expense.id} 
@@ -169,41 +170,46 @@
                             </td>
                         {/await}
                     {/each}
-                    <td class="text-center border border-violet-500 bg-violet-400 font-semibold text-violet-600 truncate">
-                        {#await paymentsPromise}
-                            <Icons name="loader" tailwind="animate-spin h-2 w-2"/>
-                        {:then payments} 
+                    {#await paymentsPromise}
+                        <td><Icons name="loader" tailwind="animate-spin h-2 w-2"/></td>
+                    {:then payments} 
+                        <td title={payments[period.label]?.total ?? '' }  
+                        class="text-center border border-violet-500 bg-violet-300 font-bold text-violet-600 truncate">
                             {payments[period.label]? moneyFormater.format(payments[period.label]?.total ?? 0) :'' } 
-                        {/await}
-                    </td>
-                    <td class="text-center border border-violet-500 font-semibold truncate">
-                        {#await paymentsPromise}
-                            <Icons name="loader" tailwind="animate-spin h-2 w-2"/>
-                        {:then payments} 
-                        { (payments[period.label]?.hours).toFixed(2) ?? '' } 
-                        {/await}
-                    </td>
-                    <td class="text-center border border-violet-500 font-semibold truncate">
-                        {#await paymentsPromise}
-                            <Icons name="loader" tailwind="animate-spin h-2 w-2"/>
-                        {:then payments} 
+                        </td>
+                    {/await}
+                    {#await paymentsPromise}
+                        <td><Icons name="loader" tailwind="animate-spin h-2 w-2"/></td>
+                    {:then payments} 
+                        <td title={ (payments[period.label]?.hours).toFixed(2) ?? '' } 
+                        class="text-right border border-violet-500 font-semibold truncate">
+                            { (payments[period.label]?.hours).toFixed(2) ?? '' } 
+                        </td>
+                    {/await}
+                    {#await paymentsPromise}
+                       <td><Icons name="loader" tailwind="animate-spin h-2 w-2"/></td>
+                    {:then payments} 
+                        <td title={payments[period.label]?.estimated ?? ''} 
+                        class="text-right border border-violet-500 font-semibold truncate">
                             {payments[period.label]? moneyFormater.format(payments[period.label]?.estimated ?? 0) :'' } 
-                        {/await}
-                    </td>
-                    <td class="text-center border border-violet-500 font-semibold truncate">
-                        {#await paymentsPromise}
-                            <Icons name="loader" tailwind="animate-spin h-2 w-2"/>
-                        {:then payments} 
+                        </td>
+                    {/await}
+                    {#await paymentsPromise}
+                        <td><Icons name="loader" tailwind="animate-spin h-2 w-2"/></td>
+                    {:then payments} 
+                        <td title={payments[period.label]?.diference ?? '' }
+                        class="text-right border border-violet-500 font-semibold truncate">
                             {payments[period.label]? moneyFormater.format(payments[period.label]?.diference ?? 0) :'' } 
-                        {/await}
-                    </td>
-                    <td class="text-center border border-violet-500 font-semibold truncate">
-                        {#await paymentsPromise}
-                            <Icons name="loader" tailwind="animate-spin h-2 w-2"/>
-                        {:then payments}
+                        </td>
+                    {/await}
+                    {#await paymentsPromise}
+                        <td><Icons name="loader" tailwind="animate-spin h-2 w-2"/></td>
+                    {:then payments}
+                        <td title={ payments[period.label]?.hoursValue ?? '' } 
+                        class="text-right border border-violet-500 font-semibold truncate">
                             { payments[period.label]?.hoursValue ?? '' } 
-                        {/await} 
-                    </td>
+                        </td>
+                    {/await} 
                 </tr>
             {/each}
         </tbody>

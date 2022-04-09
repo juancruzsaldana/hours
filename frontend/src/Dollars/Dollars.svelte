@@ -2,7 +2,7 @@
     import dollarsService from "../services/dollarsService";
     import Icons from "../Icons/Icons.svelte";
     import {moneyFormater, dollarFormater} from "../services/utils";
-    import NewMovement from "../Forms/newMovement.svelte";
+    import NewMovement from "../Forms/NewMovement.svelte";
     let sellValue = 199;
     let buyValue = 204;
     let airtmSellValue = 180.469482814;

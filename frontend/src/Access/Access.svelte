@@ -56,7 +56,7 @@
         visibleAccess = accessArray;
     };
 </script>
-<div class="container mx-auto">
+<div class="container mx-auto px-2">
     <h1 class="text-center font-bold text-lg  text-stone-600">Access</h1>
     <NewAccess onSubmit={submitAccessForm} access={selectedAccess} buttonText={buttonText} />
     <div class="sm:flex justify-end border-t border-stone-500 mt-2 pt-2 text-neutral-500 items-center text-xs">

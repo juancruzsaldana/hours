@@ -75,7 +75,7 @@
     };
 </script>
 
-<div class="container mx-auto">
+<div class="container mx-auto px-2">
     <h1 class="text-center font-bold text-lg  text-neutral-600">Expenses</h1>
     <Dates onSubmit={getExpenses} start={startDate.toISOString().split('T')[0]} end={endDate.toISOString().split('T')[0]} 
     icon="expenses" buttonText="Get Expenses" color="indigo" />
