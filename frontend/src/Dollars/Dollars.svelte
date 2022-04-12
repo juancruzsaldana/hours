@@ -3,6 +3,7 @@
     import Icons from "../Icons/Icons.svelte";
     import {moneyFormater, dollarFormater} from "../services/utils";
     import NewMovement from "../Forms/NewMovement.svelte";
+    import  Graphics from "./Graphics.svelte";
     let sellValue = 199;
     let buyValue = 204;
     let airtmSellValue = 180.469482814;
@@ -160,7 +161,11 @@
             </table>
         {/await} 
     </div>
-    <div class="w-1/4">
-            graphs
+    <div class="w-1/3 mt-4">
+        {#await promiseMovements}
+            <p class="dark:text-gray-400 flex gap-2 items-center"><Icons name="loader" tailwind="animate-spin h-4 w-4"/>Load Movements...</p>
+        {:then _}
+            <Graphics movements={data.movements} sellValues={{1: sellValue, 2: airtmSellValue}}/>
+        {/await}
     </div>
 </div>
