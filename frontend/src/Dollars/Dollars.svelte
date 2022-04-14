@@ -4,6 +4,7 @@
     import {moneyFormater, dollarFormater} from "../services/utils";
     import NewMovement from "../Forms/NewMovement.svelte";
     import  Graphics from "./Graphics.svelte";
+    import Sources from "./Sources.svelte";
     let sellValue = 199;
     let buyValue = 204;
     let airtmSellValue = 180.469482814;
@@ -167,5 +168,6 @@
         {:then _}
             <Graphics movements={data.movements} sellValues={{1: sellValue, 2: airtmSellValue}}/>
         {/await}
+        <Sources sellValue={sellValue}> </Sources>
     </div>
 </div>

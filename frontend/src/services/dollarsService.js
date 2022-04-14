@@ -54,6 +54,38 @@ class DollarsService {
         });
     }
 
+    getSources() {
+        return new Promise(async (resolve, reject) => {
+            const endpoint = `source/`;
+            const r = await apiService.get(endpoint);
+            resolve(r)
+        });
+    }
+
+    newSource(source) {
+        return new Promise(async (resolve, reject) => {
+            const endpoint = `source/`;
+            const r = await apiService.post(endpoint, JSON.stringify(source));
+            resolve(r)
+        });
+    }
+
+    editSource (id, {name,description, amount}) {
+        return new Promise(async (resolve, reject) => {
+            const endpoint = `source/${id}/`;
+            const r = await apiService.put(endpoint, JSON.stringify({name,description, amount}));
+            resolve(r)
+        });
+    }
+
+    removeSource (id) {
+        return new Promise(async (resolve, reject) => {
+            const endpoint = `source/${id}/`;
+            const r = await apiService.delete(endpoint);
+            resolve(r)
+        });
+    }
+
 }
 
 const dollarsService = new DollarsService();

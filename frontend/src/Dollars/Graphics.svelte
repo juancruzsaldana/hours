@@ -46,8 +46,7 @@
                 xAxisMode: 'tick'
             },
             lineOptions: {
-                hideDots: 1,
-                spline: 1
+                hideDots: 1
             },
         });
         const partialsChart = new Chart("#partials", {  
@@ -60,8 +59,7 @@
                 xAxisMode: 'tick'
             },
             lineOptions: {
-                hideDots: 1,
-                spline: 1
+                hideDots: 1
             },
         });
 
