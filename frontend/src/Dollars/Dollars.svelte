@@ -5,10 +5,10 @@
     import NewMovement from "../Forms/NewMovement.svelte";
     import  Graphics from "./Graphics.svelte";
     import Sources from "./Sources.svelte";
-    let sellValue = 199;
-    let buyValue = 204;
-    let airtmSellValue = 180.469482814;
-    let galiciaSellValue = 106;
+    let sellValue = localStorage.getItem('sellValue') ?? 199;
+    let buyValue = localStorage.getItem('buyValue') ?? 204;
+    let airtmSellValue = localStorage.getItem('airtmSellValue') ?? 180.469482814;
+    let galiciaSellValue = localStorage.getItem('galiciaSellValue') ?? 106;
     let data = [];
     let selectedMovement = {};
     let promiseMovements = (async () =>{ 
@@ -24,6 +24,10 @@
         });
     };
 
+    const setLocalStorage = (key, value) => {
+        localStorage.setItem(key, value);
+    };
+
 </script>
 
 <h1 class="text-center font-bold text-lg  text-neutral-600 border-b border-neutral-600 pb-2 mb-2">Dollars</h1>
@@ -36,19 +40,19 @@
         <p>Intervalo de Consulta: del 27/01/2018 al 27/07/2018</p>
     </div>
     <div class="actual-values px-2">
-        <form class="w-full mb-2">
+        <form on:submit|preventDefault={setLocalStorage('sellValue', sellValue)} class="w-full mb-2">
             <div class="flex justify-between items-center">
                 <label for="from" class="font-bold sm:mr-1">Valor de venta: </label>
                 <input class="py-0" type="number" id="sellValue" bind:value={sellValue}>
             </div>
         </form>
-        <form class="w-full mb-2">
+        <form on:submit|preventDefault={setLocalStorage('buyValue', buyValue)} class="w-full mb-2">
             <div class="flex justify-between items-center">
                 <label for="from" class="font-bold sm:mr-1">Valor de compra: </label>
                 <input class="py-0" type="number" id="buyValue" bind:value={buyValue}>
             </div>
         </form>
-        <form class="w-full">
+        <form on:submit|preventDefault={setLocalStorage('airtmSellValue', airtmSellValue)} class="w-full">
             <div class="flex justify-between items-center">
                 <label for="from" class="font-bold sm:mr-1">Valor de venta Airtm: </label>
                 <input class="py-0" type="number" id="airtmSellValue" bind:value={airtmSellValue}>
@@ -64,10 +68,10 @@
                 <input type="text" readonly id="valueInPesos" class="py-0 ml-2 text-right" value={moneyFormater.format(data.totals.lastPartial * sellValue)}>
             {/await}
         </div>
-        <div class="flex justify-between items-center text-xs">
+        <form on:submit|preventDefault={setLocalStorage('galiciaSellValue', galiciaSellValue)} class="flex justify-between items-center text-xs">
             <label for="from" class="font-bold sm:mr-1">Venta en Galicia: </label>
             <input class="py-0 text-xs" type="number" id="airtmSellValue" bind:value={galiciaSellValue}>
-        </div>
+        </form>
         <div class="flex justify-between items-center text-xs">
             <label for="from" class="font-bold sm:mr-1">Con 65 %: </label>
             <input class="py-0 text-xs" type="number" id="airtmSellValue" readonly value={(galiciaSellValue * 1.65).toFixed(2)}>
