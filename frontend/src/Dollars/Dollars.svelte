@@ -5,22 +5,33 @@
     import NewMovement from "../Forms/NewMovement.svelte";
     import  Graphics from "./Graphics.svelte";
     import Sources from "./Sources.svelte";
+    import Modal from "../Components/Modal.svelte";
+    import NewMovementDetail from "../Forms/NewMovementDetail.svelte";
+    import MovementDetails from "./MovementDetails.svelte";
     let sellValue = localStorage.getItem('sellValue') ?? 199;
     let buyValue = localStorage.getItem('buyValue') ?? 204;
     let airtmSellValue = localStorage.getItem('airtmSellValue') ?? 180.469482814;
     let galiciaSellValue = localStorage.getItem('galiciaSellValue') ?? 106;
     let data = [];
     let selectedMovement = {};
+    let selectedMovementDetails = [];
+    let showMovementDetails = false;
     let promiseMovements = (async () =>{ 
         data = await dollarsService.getMovements();
         return data;
     })();
     let newMovementPromise = new Promise((resolve, reject) => resolve(true));
 
+    const getMovementDetails = async (movement) => {
+        selectedMovement = movement;
+        selectedMovementDetails = await dollarsService.getMovementDetails(movement.id);
+        showMovementDetails = true;
+    };
     const onNewMovement = async (movement) => {
-        newMovementPromise = dollarsService.newMovement(movement).then(async () => {
-            data = await dollarsService.getMovements();
-            promiseMovements = new Promise((resolve, reject) => resolve(data));
+        newMovementPromise = dollarsService.newMovement(movement).then(async (r) => {
+            console.log(r);
+            // data = await dollarsService.getMovements();
+            // promiseMovements = new Promise((resolve, reject) => resolve(data));
         });
     };
 
@@ -28,8 +39,21 @@
         localStorage.setItem(key, value);
     };
 
-</script>
+    const onNewMovementDetail = (detail) => {
+        dollarsService.newMovementDetail(detail).then(() => {
+            selectedMovementDetails.push(detail);
+            selectedMovementDetails = selectedMovementDetails;
+        });
+    };
 
+</script>
+{#if showMovementDetails}
+<Modal on:close={()=>showMovementDetails = false} color="green" avoidMaxHeight>
+    <h2 slot="title" class="font-bold text-green-600 text-md">{selectedMovement.name}</h2>
+    <NewMovementDetail movement={selectedMovement} onSubmit={onNewMovementDetail}/>
+    <MovementDetails details={selectedMovementDetails} movement={selectedMovement}/>
+</Modal>   
+{/if}
 <h1 class="text-center font-bold text-lg  text-neutral-600 border-b border-neutral-600 pb-2 mb-2">Dollars</h1>
 <div class="sm:flex text-sm text-stone-900 justify-between">
     <div class="account-data px-1 text-xs w-1/6">
@@ -103,7 +127,7 @@
                 <tbody>
                     {#each data.movements as movement, i }
                         <tr>
-                            <td class="text-center border border-gray-500">{i+1}</td>
+                            <td class="text-center border border-gray-500 cursor-pointer" on:click|preventDefault="{getMovementDetails(movement)}">{i+1}</td>
                             <td class="text-center border border-gray-500">{movement.date}</td>
                             <td title={movement.name}
                             class="text-left border border-gray-500 truncate max-w-[12rem]">{movement.name}</td>

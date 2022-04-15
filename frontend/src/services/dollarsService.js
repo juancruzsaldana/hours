@@ -86,6 +86,22 @@ class DollarsService {
         });
     }
 
+    getMovementDetails (movementId) {
+        return new Promise(async (resolve, reject) => {
+            const endpoint = `movementDetails/${movementId}/`;
+            const r = await apiService.get(endpoint);
+            resolve(r)
+        });
+    }
+
+    newMovementDetail (detail) {
+        return new Promise(async (resolve, reject) => {
+            const endpoint = `movementDetails/`;
+            const r = await apiService.post(endpoint, JSON.stringify(detail));
+            resolve(r)
+        });
+    }
+    
 }
 
 const dollarsService = new DollarsService();
