@@ -44,6 +44,7 @@ urlpatterns = [
     path('source/', dollar_views.Source.as_view()),
     path('source/<int:source_id>/', dollar_views.Source.as_view()),
     path('movementDetails/', dollar_views.MovementDetails.as_view()),
+    path('movementDetails/<int:movement_id>/', dollar_views.MovementDetails.as_view()),
     path('movementDetails/<int:movement_detail_id>/', dollar_views.MovementDetails.as_view())
 ]
 

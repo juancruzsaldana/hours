@@ -73,8 +73,8 @@ class Source (APIView):
         return Response({"message": "Source deleted successfully"})
 
 class MovementDetails (APIView):
-    def get(self, request, format=None):
-        queryset = MovementDetail.objects.all()
+    def get(self, request, movement_id, format=None):
+        queryset = MovementDetail.objects.filter(movement = movement_id)
         read_serializer = MovementDetailSerializer(queryset, many=True)
         return Response(read_serializer.data) 
 
