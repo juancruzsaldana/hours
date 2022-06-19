@@ -165,15 +165,15 @@ class ExpensesService {
         });
     }
 
-    newPayment(payment, files) {
+    newPayment(payment, files, filename) {
         return new Promise(async (resolve, reject) => {
             let headers = {'Accept': 'application/json'}
             const endpoint = `payments/`;
             let data = new FormData();
             if(typeof files !== 'undefined' && files.length > 0){
-                let file = files[0];
+                let file = this.renameFile(files[0], filename);
                 data.append('voucher', file);
-                headers = {...headers, 'Content-Disposition': 'attachment', 'filename': file.name}
+                headers = {...headers, 'Content-Disposition': 'attachment', 'filename': filename}
             }
             for(var key in payment){
                 if(key === 'date'){
@@ -195,15 +195,15 @@ class ExpensesService {
         });
     }
 
-    editPayment(id, payment, files) {
+    editPayment(id, payment, files, filename='') {
         return new Promise (async (resolve, reject) => {
             let headers = {'Accept': 'application/json'}
             const endpoint = `payments/${id}/`;
             let data = new FormData();
             if(typeof files !== 'undefined' && files.length > 0){
-                let file = files[0];
+                let file = this.renameFile(files[0], filename);
                 data.append('voucher', file);
-                headers = {...headers, 'Content-Disposition': 'attachment', 'filename': file.name}
+                headers = {...headers, 'Content-Disposition': 'attachment', 'filename': filename}
             }
             for(var key in payment){
                 if(key === 'date'){
@@ -216,6 +216,10 @@ class ExpensesService {
             const r = await apiService.put(endpoint, data, headers);
             resolve(r)    
         });
+    }
+
+    renameFile (file, filename) {
+        return new File([file], `${filename}.${(file.name.match(/[^\\\/]\.([^.\\\/]+)$/) || [null]).pop()}`, {type: file.type, lastModified: file.lastModified});
     }
 }
 const expensesService = new ExpensesService();

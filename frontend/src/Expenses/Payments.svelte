@@ -38,7 +38,9 @@
         paymentsPromise = expensesService.refreshPayments(paymentsObjects);
     }
     const onNewPayment = async (payment, files) => {
-        newPaymentPromise = expensesService.newPayment(payment, files).then(async r => {
+        const expense = expenses.find(e => e.id === payment.expense);
+        let filename = `${expense.name}_${new Date(payment.date).toISOString()}`;
+        newPaymentPromise = expensesService.newPayment(payment, files, filename).then(async r => {
             showModal = false;
             //TODO show success message
             setPayment(r.payment);
@@ -46,7 +48,9 @@
         })
     };
     const onEditPayment = async (payment, files) => {
-        newPaymentPromise = expensesService.editPayment(payment.id, payment, files).then(async r => {
+        const expense = expenses.find(e => e.id === payment.expense);
+        let filename = `${expense.name}_${new Date(payment.date).toISOString()}`;
+        newPaymentPromise = expensesService.editPayment(payment.id, payment, files, filename).then(async r => {
             //TODO show success message
             setPayment(r.payment);
         })

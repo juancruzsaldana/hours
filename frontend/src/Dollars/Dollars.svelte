@@ -29,9 +29,8 @@
     };
     const onNewMovement = async (movement) => {
         newMovementPromise = dollarsService.newMovement(movement).then(async (r) => {
-            console.log(r);
-            // data = await dollarsService.getMovements();
-            // promiseMovements = new Promise((resolve, reject) => resolve(data));
+            data = await dollarsService.getMovements();
+            promiseMovements = new Promise((resolve, reject) => resolve(data));
         });
     };
 
