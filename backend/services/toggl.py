@@ -10,7 +10,7 @@ class TogglService:
     def __init__(self):
         load_dotenv(find_dotenv())
         self.api_token =  os.getenv('TOGGL_API_TOKEN')
-        self.base_url = 'https://api.track.toggl.com/api/v8/'
+        self.base_url = 'https://api.track.toggl.com/api/v8'
         self.headers = {
             'Authorization': 'Basic ' + self.api_token,
             'Content-Type': 'application/json'
