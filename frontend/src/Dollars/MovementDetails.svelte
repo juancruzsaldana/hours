@@ -26,7 +26,13 @@
                         <td class="text-center border border-emerald-500">{detail.name}</td>
                         <td class="text-right border border-emerald-500">{moneyFormater.format(Number(detail.amountInPesos))}</td>
                         <td class="text-right border border-emerald-500">{dollarFormater.format(Number(detail.amountInDollars))}</td>
-                        <td class="text-right border border-emerald-500">{dynamicMoney(moneyLang[detail.localCurrencyCode],detail.localCurrencyCode).format(Number(detail.amountInLocal))}</td>
+                        <td class="text-right border border-emerald-500">
+                            {#if details.localCurrencyCode}    
+                                {dynamicMoney(moneyLang[detail.localCurrencyCode],detail.localCurrencyCode).format(Number(detail.amountInLocal))}
+                            {:else}
+                                {' '}
+                            {/if}
+                        </td>
                     </tr>
                 {/each}
             {:else}
